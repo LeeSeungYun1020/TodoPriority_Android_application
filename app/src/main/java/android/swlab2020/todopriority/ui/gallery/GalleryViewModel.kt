@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority.ui.gallery
+package android.swlab2020.todopriority.ui.gallery
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

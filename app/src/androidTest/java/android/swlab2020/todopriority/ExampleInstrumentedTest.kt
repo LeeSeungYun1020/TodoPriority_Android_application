@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority
+package android.swlab2020.todopriority
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

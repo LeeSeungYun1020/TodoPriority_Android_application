@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority
+package android.swlab2020.todopriority
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority.ui.home
+package android.swlab2020.todopriority.ui.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import android.leeseungyun.todopriority.R
+import android.swlab2020.todopriority.R
 
 class HomeFragment : Fragment() {
 

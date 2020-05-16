@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority
+package android.swlab2020.todopriority
 
 import android.os.Bundle
 import android.view.Menu

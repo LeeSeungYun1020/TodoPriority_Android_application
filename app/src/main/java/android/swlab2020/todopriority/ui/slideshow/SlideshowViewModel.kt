@@ -1,4 +1,4 @@
-package android.leeseungyun.todopriority.ui.slideshow
+package android.swlab2020.todopriority.ui.slideshow
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
