@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TodoPriority</string>
+    <string name="menu_projects">프로젝트</string>
+    <string name="menu_matrix">행렬</string>
+    <string name="menu_todo">할 일</string>
+    <string name="action_settings">설정</string>
+    <string name="nav_header_desc">네비게이션 헤더</string>
+    <string name="menu_analyze">분석</string>
+    <string name="menu_settings">설정</string>
+</resources>

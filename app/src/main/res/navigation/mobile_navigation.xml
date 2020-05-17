@@ -8,36 +8,50 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="android.swlab2020.todopriority.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:label="@string/menu_todo"
         tools:layout="@layout/fragment_home">
 
-        <action
-            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"
-            app:destination="@id/nav_home_second" />
+        <!--        <action-->
+        <!--            android:id="@+id/action_HomeFragment_to_HomeSecondFragment"-->
+        <!--            app:destination="@id/nav_home_second" />-->
     </fragment>
-    <fragment
-        android:id="@+id/nav_home_second"
-        android:name="android.swlab2020.todopriority.ui.home.HomeSecondFragment"
-        android:label="@string/home_second"
-        tools:layout="@layout/fragment_home_second">
-        <action
-            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"
-            app:destination="@id/nav_home" />
+    <!--    <fragment-->
+    <!--        android:id="@+id/nav_home_second"-->
+    <!--        android:name="android.swlab2020.todopriority.ui.home.HomeSecondFragment"-->
+    <!--        android:label="@string/home_second"-->
+    <!--        tools:layout="@layout/fragment_home_second">-->
+    <!--        <action-->
+    <!--            android:id="@+id/action_HomeSecondFragment_to_HomeFragment"-->
+    <!--            app:destination="@id/nav_home" />-->
 
-        <argument
-            android:name="myArg"
-            app:argType="string" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_gallery"
-        android:name="android.swlab2020.todopriority.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+    <!--        <argument-->
+    <!--            android:name="myArg"-->
+    <!--            app:argType="string" />-->
+    <!--    </fragment>-->
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="android.swlab2020.todopriority.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_project"
+        android:name="android.swlab2020.todopriority.ui.projects.ProjectsFragment"
+        android:label="@string/menu_projects"
+        tools:layout="@layout/fragment_projects" />
+
+    <fragment
+        android:id="@+id/nav_matrix"
+        android:name="android.swlab2020.todopriority.ui.matrix.MatrixFragment"
+        android:label="@string/menu_matrix"
+        tools:layout="@layout/fragment_matrix" />
+
+    <fragment
+        android:id="@+id/nav_analyze"
+        android:name="android.swlab2020.todopriority.ui.analyze.AnalyzeFragment"
+        android:label="@string/menu_analyze"
+        tools:layout="@layout/fragment_analyze" />
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="android.swlab2020.todopriority.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
+
+
 </navigation>

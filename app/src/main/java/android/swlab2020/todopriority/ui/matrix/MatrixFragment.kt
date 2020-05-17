@@ -1,4 +1,4 @@
-package android.swlab2020.todopriority.ui.home
+package android.swlab2020.todopriority.ui.matrix
 
 import android.os.Bundle
 import android.swlab2020.todopriority.R
@@ -10,19 +10,19 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
-class HomeFragment : Fragment() {
+class MatrixFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var matrixViewModel: MatrixViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+        matrixViewModel = ViewModelProvider(this)[MatrixViewModel::class.java]
+        val root = inflater.inflate(R.layout.fragment_matrix, container, false)
+        val textView: TextView = root.findViewById(R.id.text_matrix)
+        matrixViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root
