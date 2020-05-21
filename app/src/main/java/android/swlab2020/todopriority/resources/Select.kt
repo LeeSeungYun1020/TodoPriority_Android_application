@@ -39,11 +39,14 @@ fun setDropdownMenu(
     context: Context,
     selector: AutoCompleteTextView,
     type: SelectType,
-    prefix: String? = null
+    prefix: String? = null,
+    suffix: String? = null
 ) {
     val resources = type.resources(context)
     if (prefix != null)
         resources.add(0, prefix)
+    if (suffix != null)
+        resources.add(suffix)
     selector.setAdapter(
         ArrayAdapter(context, R.layout.dropdown_menu_popup_item, resources)
     )

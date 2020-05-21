@@ -1,5 +1,6 @@
 package android.swlab2020.todopriority
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -13,8 +14,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity() {
-
+    companion object {
+        private const val ADD_ACTIVITY = 1001
+    }
     private lateinit var appBarConfiguration: AppBarConfiguration
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +42,19 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         nav_view.setupWithNavController(navController)
-        main_fab.setOnClickListener { view ->
+        main_fab.setOnClickListener { _ ->
             val intent = Intent(this, AddActivity::class.java)
             when (navController.currentDestination?.id) {
-                R.id.nav_home -> intent.putExtra(AddActivity.MODE, AddActivity.TASK)
-                R.id.nav_project -> intent.putExtra(AddActivity.MODE, AddActivity.PROJECT)
+                R.id.nav_home -> intent.putExtra(
+                    AddActivity.Extra.Mode.code,
+                    AddActivity.Extra.Mode.TASK.code
+                )
+                R.id.nav_project -> intent.putExtra(
+                    AddActivity.Extra.Mode.code,
+                    AddActivity.Extra.Mode.PROJECT.code
+                )
             }
-            startActivity(intent)
+            startActivityForResult(intent, ADD_ACTIVITY)
         }
     }
 
@@ -53,5 +63,18 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            ADD_ACTIVITY -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        //TODO("프로젝트 또는 할 일 추가 완료 -> 데이터 새로 고침")
+                    }
+                    //Activity.RESULT_CANCELED -> {}
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
 }

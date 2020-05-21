@@ -43,5 +43,6 @@
     <string name="add_error_deadline_date_not_valid">Can\'t select the day before today.</string>
     <string name="add_select_project">Project</string>
     <string name="add_select_project_init">Select Project</string>
+    <string name="add_select_project_new">Add New Project</string>
 
 </resources>

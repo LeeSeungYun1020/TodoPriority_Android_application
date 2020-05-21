@@ -1,8 +1,10 @@
 package android.swlab2020.todopriority
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.swlab2020.todopriority.resources.SelectType
 import android.swlab2020.todopriority.resources.setDropdownMenu
@@ -21,18 +23,38 @@ import java.util.*
 import kotlin.math.roundToInt
 
 class AddActivity : AppCompatActivity() {
-    companion object {
-        const val MODE = "mode"
-        const val PROJECT = 2001
-        const val TASK = 2002
+    companion object Extra {
+        const val ADD_ACTIVITY_TASK_TO_PROJECT = 2001
 
-        const val TYPE = "type"
-        const val AUTO = 2101
-        const val MANUAL = 2102
+        enum class Mode(val code: Int) {
+            PROJECT(2101), TASK(2102);
+
+            companion object {
+                const val code = "mode"
+            }
+        }
+
+        enum class Type(val code: Int) {
+            AUTO(2201), MANUAL(2202);
+
+            companion object {
+                const val code = "type"
+            }
+        }
     }
 
-    private val mode by lazy { intent.getIntExtra(MODE, PROJECT) }
-    private val type by lazy { intent.getIntExtra(TYPE, AUTO) }
+    private val mode by lazy {
+        when (intent.getIntExtra(Mode.code, Mode.PROJECT.code)) {
+            Mode.TASK.code -> Mode.TASK
+            else -> Mode.PROJECT
+        }
+    }
+    private val type by lazy {
+        when (intent.getIntExtra(Type.code, Type.AUTO.code)) {
+            Type.MANUAL.code -> Type.MANUAL
+            else -> Type.AUTO
+        }
+    }
     private val deadlineCalendar by lazy { Calendar.getInstance() }
     private var estimatedHour = 0
     private var estimatedMinute = 0
@@ -64,13 +86,31 @@ class AddActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            ADD_ACTIVITY_TASK_TO_PROJECT -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        //TODO("프로젝트 추가 완료 -> 프로젝트 새로 고침 -> 추가한 프로젝트로 자동 선택")
+                    }
+                    //Activity.RESULT_CANCELED -> {}
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
     private fun onCanceled() {
+        setResult(Activity.RESULT_CANCELED)
         finish()
     }
 
     private fun onDone() {
         if (validateEssentialData()) {
             //TODO("DATABASE code required. 데이터 베이스 연동 코드 작성")
+            setResult(Activity.RESULT_OK)
+            finish()
         }
     }
 
@@ -80,14 +120,21 @@ class AddActivity : AppCompatActivity() {
             this,
             projectDropdown,
             SelectType.PROJECT,
-            getString(R.string.add_select_project_init)
+            getString(R.string.add_select_project_init),
+            getString(R.string.add_select_project_new)
         )
         project_count_add.text = "0"
-        projectDropdown.setOnItemClickListener { _, _, pos, _ ->
+        projectDropdown.setOnItemClickListener { adapter, _, pos, _ ->
+
             project_count_add.text = pos.toString()
-            project_select_add.error = when (pos) {
-                0 -> getString(R.string.add_error_blank)
-                else -> null
+            when (pos) {
+                0 -> project_select_add.error = getString(R.string.add_error_blank)
+                adapter.count - 1 -> {
+                    val intent = Intent(this, AddActivity::class.java)
+                    intent.putExtra(Mode.code, Mode.PROJECT.code)
+                    startActivityForResult(intent, ADD_ACTIVITY_TASK_TO_PROJECT)
+                }
+                else -> project_select_add.error = null
             }
         }
     }
@@ -247,7 +294,7 @@ class AddActivity : AppCompatActivity() {
         val blankErrorMessage = getString(R.string.add_error_blank)
         var hasError = false
         project_select_add.error = when {
-            mode == TASK && project_count_add.text == "0" -> {
+            mode == Mode.TASK && project_count_add.text == "0" -> {
                 hasError = true
                 blankErrorMessage
             }
@@ -292,13 +339,13 @@ class AddActivity : AppCompatActivity() {
 
     private fun setMode() {
         when (mode) {
-            PROJECT -> {
+            Mode.PROJECT -> {
                 title = getString(R.string.add_title_project)
                 project_select_add.visibility = View.GONE
                 deadline_time_add.visibility = View.GONE
                 estimated_time_add.visibility = View.GONE
             }
-            TASK -> {
+            Mode.TASK -> {
                 title = getString(R.string.add_title_task)
             }
         }
@@ -306,7 +353,7 @@ class AddActivity : AppCompatActivity() {
 
     private fun setType() {
         when (type) {
-            AUTO -> {
+            Type.AUTO -> {
                 val layoutList = listOf(deadline_date_add, deadline_time_add, estimated_time_add)
                 val dialogList = listOf({ showDeadlineDateDialog() },
                     { showDeadlineTimeDialog() },
@@ -320,7 +367,7 @@ class AddActivity : AppCompatActivity() {
                     }
                 }
             }
-            MANUAL -> {
+            Type.MANUAL -> {
                 // OK, all done. / 추가 작업이 필요하지 않음
             }
         }

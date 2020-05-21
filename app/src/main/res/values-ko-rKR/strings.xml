@@ -41,4 +41,5 @@
     <string name="add_error_deadline_date_not_valid">오늘 이전 날짜를 선택할 수는 없습니다.</string>
     <string name="add_select_project">프로젝트</string>
     <string name="add_select_project_init">프로젝트 선택</string>
+    <string name="add_select_project_new">새 프로젝트 추가</string>
 </resources>
