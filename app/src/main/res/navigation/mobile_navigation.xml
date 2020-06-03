@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="android.swlab2020.todopriority.ui.home.HomeFragment"
+        android:name="android.swlab2020.todopriority.ui.HomeFragment"
         android:label="@string/menu_todo"
         tools:layout="@layout/fragment_home">
 
@@ -31,25 +31,25 @@
 
     <fragment
         android:id="@+id/nav_project"
-        android:name="android.swlab2020.todopriority.ui.projects.ProjectsFragment"
+        android:name="android.swlab2020.todopriority.ui.ProjectsFragment"
         android:label="@string/menu_projects"
         tools:layout="@layout/fragment_projects" />
 
     <fragment
         android:id="@+id/nav_matrix"
-        android:name="android.swlab2020.todopriority.ui.matrix.MatrixFragment"
+        android:name="android.swlab2020.todopriority.ui.MatrixFragment"
         android:label="@string/menu_matrix"
         tools:layout="@layout/fragment_matrix" />
 
     <fragment
         android:id="@+id/nav_analyze"
-        android:name="android.swlab2020.todopriority.ui.analyze.AnalyzeFragment"
+        android:name="android.swlab2020.todopriority.ui.AnalyzeFragment"
         android:label="@string/menu_analyze"
         tools:layout="@layout/fragment_analyze" />
 
     <fragment
         android:id="@+id/nav_settings"
-        android:name="android.swlab2020.todopriority.ui.settings.SettingsFragment"
+        android:name="android.swlab2020.todopriority.ui.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 

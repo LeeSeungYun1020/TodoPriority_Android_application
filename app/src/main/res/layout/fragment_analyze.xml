@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="android.swlab2020.todopriority.ui.analyze.AnalyzeFragment">
+    tools:context="android.swlab2020.todopriority.ui.AnalyzeFragment">
 
     <TextView
         android:id="@+id/text_analyze"

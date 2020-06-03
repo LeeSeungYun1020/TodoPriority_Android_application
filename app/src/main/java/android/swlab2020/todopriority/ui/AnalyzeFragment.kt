@@ -1,7 +1,8 @@
-package android.swlab2020.todopriority.ui.analyze
+package android.swlab2020.todopriority.ui
 
 import android.os.Bundle
 import android.swlab2020.todopriority.R
+import android.swlab2020.todopriority.data.AnalyzeViewModel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

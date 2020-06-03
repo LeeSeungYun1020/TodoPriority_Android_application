@@ -18,7 +18,7 @@
     <string name="add_title">Title</string>
     <string name="add_importance">Importance</string>
     <string name="add_deadline_date">Deadline (date)</string>
-    <string name="add_estimated_time">Estimated time</string>
+    <string name="add_estimated_time">Estimated time (Default: Over 24h)</string>
     <string name="add_memo">Memo</string>
     <string name="add_star">Importance</string>
     <string name="add_description_deadline_date">Select deadline date.</string>
@@ -44,5 +44,35 @@
     <string name="add_select_project">Project</string>
     <string name="add_select_project_init">Select Project</string>
     <string name="add_select_project_new">Add New Project</string>
+    <string name="card_expand">Expand card more or less</string>
+    <string name="card_title">Title</string>
+    <string name="card_date_hint" translatable="false">2020/05/15 AM 03:31</string>
+    <string name="card_msg">Start now!</string>
+    <string name="card_importance_text">Importance:</string>
+    <string name="card_urgency_text">Urgency:</string>
+    <string name="card_score_hint" translatable="false">100/100</string>
+    <string name="card_deadline">Deadline:</string>
+    <string name="card_estimated_time">Estimated time:</string>
+    <string name="card_minimum_start_time">Minimum Start time:</string>
+    <string name="card_time_hint" translatable="false">04:21</string>
+    <string name="card_memo">Memo:</string>
+    <string name="card_complete">Complete</string>
+    <string name="card_edit">Edit</string>
+    <string name="card_delete">Delete</string>
+    <string name="card_project">Project:</string>
+    <string name="message_start_important_1">It must be completed immediately.</string>
+    <string name="message_start_important_2">I recommend completing it quickly.</string>
+    <string name="message_start_important_3">I recommend starting now to complete.</string>
+    <string name="message_start_important_4">Let\'s do it gradually.</string>
+    <string name="message_start_not_important_2">If you have someone to ask, delegate it.</string>
+    <string name="message_start_not_important_3">Do something else first.</string>
+    <string name="message_start_not_important_4">Cancel or Postpone it.</string>
+    <string name="message_start_not_important_1">Get it done somehow quickly.</string>
+    <string name="action_add">ADD</string>
+    <string name="action_add_project">Add project</string>
+    <string name="action_add_task">Add task</string>
+    <string name="card_add_task">Add task</string>
+    <string name="card_analyze">Analyze</string>
+    <string name="card_time_over">Over 24h</string>
 
 </resources>

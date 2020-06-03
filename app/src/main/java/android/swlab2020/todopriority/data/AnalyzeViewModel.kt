@@ -1,13 +1,12 @@
-package android.swlab2020.todopriority.ui.matrix
+package android.swlab2020.todopriority.data
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MatrixViewModel : ViewModel() {
-
+class AnalyzeViewModel : ViewModel() {
     private val _text = MutableLiveData<String>().apply {
-        value = "This is matrix Fragment"
+        value = "This is analyze Fragment"
     }
     val text: LiveData<String> = _text
 }

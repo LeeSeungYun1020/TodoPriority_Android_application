@@ -1,4 +1,4 @@
-package android.swlab2020.todopriority.resources
+package android.swlab2020.todopriority.data
 
 import android.content.Context
 import android.swlab2020.todopriority.R
@@ -38,17 +38,10 @@ enum class SelectType {
 fun setDropdownMenu(
     context: Context,
     selector: AutoCompleteTextView,
-    type: SelectType,
-    prefix: String? = null,
-    suffix: String? = null
+    list: MutableList<String>
 ) {
-    val resources = type.resources(context)
-    if (prefix != null)
-        resources.add(0, prefix)
-    if (suffix != null)
-        resources.add(suffix)
     selector.setAdapter(
-        ArrayAdapter(context, R.layout.dropdown_menu_popup_item, resources)
+        ArrayAdapter(context, R.layout.dropdown_menu_popup_item, list)
     )
-    selector.setText(resources[0], false)
+    selector.setText(list[0], false)
 }

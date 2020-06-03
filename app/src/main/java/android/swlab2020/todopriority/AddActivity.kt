@@ -6,12 +6,13 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.swlab2020.todopriority.resources.SelectType
-import android.swlab2020.todopriority.resources.setDropdownMenu
+import android.swlab2020.todopriority.data.SelectType
 import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -24,8 +25,8 @@ import kotlin.math.roundToInt
 
 class AddActivity : AppCompatActivity() {
     companion object Extra {
-        const val ADD_ACTIVITY_TASK_TO_PROJECT = 2001
-
+        val extraList =
+            listOf("project", "title", "importance", "deadline", "estimatedTime", "memo")
         enum class Mode(val code: Int) {
             PROJECT(2101), TASK(2102);
 
@@ -66,11 +67,57 @@ class AddActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setMode()
         setType()
-        initProjectDropdown()
+        readData()
+        if (mode == Mode.TASK) {
+            initProjectDropdown()
+            initEstimatedTime()
+        }
+        initTitle()
+        initMemo()
         initImportance()
         initDeadline()
-        initEstimatedTime()
         initButtons()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(extraList[0], project_count_add.text.toString().toInt())
+        outState.putString(extraList[1], title_text_add.editText?.text.toString())
+        outState.putInt(extraList[2], importance_star_bar_add.rating.roundToInt())
+        outState.putLong(extraList[3], deadlineCalendar.timeInMillis)
+        outState.putInt(extraList[4], estimatedHour * 60 + estimatedMinute)
+        outState.putString(extraList[5], memo_text_add.editText?.text.toString())
+        outState.putString("projectName", project_select_add.editText?.text.toString())
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        project_count_add.text = savedInstanceState.getInt(extraList[0], -1).toString()
+        project_select_add.editText?.setText(savedInstanceState.getString("projectName"))
+        title_text_add.editText?.setText(savedInstanceState.getString(extraList[1]))
+        importance_star_bar_add.rating = savedInstanceState.getInt(extraList[2], 0).toFloat()
+        importance_star_number_add.editText?.setText(
+            savedInstanceState.getInt(extraList[2], 0).toString()
+        )
+        deadlineCalendar.timeInMillis =
+            savedInstanceState.getLong(extraList[3], deadlineCalendar.timeInMillis)
+        deadline_date_add.editText?.setText(
+            DateFormat.format(
+                "yyyy-MM-dd",
+                deadlineCalendar
+            )
+        )
+        val deadlineHour = deadlineCalendar[Calendar.HOUR_OF_DAY]
+        val deadlineMinute = deadlineCalendar[Calendar.MINUTE]
+        if (deadlineHour > 0 || deadlineMinute > 0)
+            deadline_time_add.editText?.setText("%02d:%02d".format(deadlineHour, deadlineMinute))
+        val estimated = savedInstanceState.getInt(extraList[4], 0)
+        estimatedHour = estimated / 60
+        estimatedMinute = estimated % 60
+        if (estimated != 0)
+            estimated_time_add.editText?.setText("%02d:%02d".format(estimatedHour, estimatedMinute))
+        memo_text_add.editText?.setText(savedInstanceState.getString(extraList[5]))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -86,21 +133,6 @@ class AddActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            ADD_ACTIVITY_TASK_TO_PROJECT -> {
-                when (resultCode) {
-                    Activity.RESULT_OK -> {
-                        //TODO("프로젝트 추가 완료 -> 프로젝트 새로 고침 -> 추가한 프로젝트로 자동 선택")
-                    }
-                    //Activity.RESULT_CANCELED -> {}
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     private fun onCanceled() {
         setResult(Activity.RESULT_CANCELED)
         finish()
@@ -108,40 +140,98 @@ class AddActivity : AppCompatActivity() {
 
     private fun onDone() {
         if (validateEssentialData()) {
-            //TODO("DATABASE code required. 데이터 베이스 연동 코드 작성")
-            setResult(Activity.RESULT_OK)
+            val intent = Intent()
+            intent.putExtra(Mode.code, mode.code)
+            intent.putExtra(extraList[0], project_count_add.text.toString().toInt())
+            intent.putExtra(extraList[1], title_text_add.editText?.text.toString())
+            intent.putExtra(extraList[2], importance_star_bar_add.rating.roundToInt())
+            intent.putExtra(extraList[3], deadlineCalendar.timeInMillis)
+            intent.putExtra(extraList[4], estimatedHour * 60 + estimatedMinute)
+            intent.putExtra(extraList[5], memo_text_add.editText?.text.toString())
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
     }
 
-    private fun initProjectDropdown() {
-        val projectDropdown = project_select_add.editText as AutoCompleteTextView
-        setDropdownMenu(
-            this,
-            projectDropdown,
-            SelectType.PROJECT,
-            getString(R.string.add_select_project_init),
-            getString(R.string.add_select_project_new)
-        )
-        project_count_add.text = "0"
-        projectDropdown.setOnItemClickListener { adapter, _, pos, _ ->
+    private fun initTitle() {
+        title_text_add.editText?.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                val manager = getSystemService(InputMethodManager::class.java)
+                manager?.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+        }
+    }
 
-            project_count_add.text = pos.toString()
-            when (pos) {
-                0 -> project_select_add.error = getString(R.string.add_error_blank)
-                adapter.count - 1 -> {
-                    val intent = Intent(this, AddActivity::class.java)
-                    intent.putExtra(Mode.code, Mode.PROJECT.code)
-                    startActivityForResult(intent, ADD_ACTIVITY_TASK_TO_PROJECT)
+    private fun initMemo() {
+        memo_text_add.editText?.setOnFocusChangeListener { view, hasFocus ->
+            if (!hasFocus) {
+                val manager = getSystemService(InputMethodManager::class.java)
+                manager?.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+        }
+    }
+
+    private fun initProjectDropdown() {
+        val size = intent.getIntExtra("size", 0)
+
+        val pairList = mutableListOf<Pair<Int, String>>()
+        val stringList = mutableListOf<String>(getString(R.string.add_select_project_init))
+        for (i in 0..size) {
+            try {
+                val pair = intent.getSerializableExtra("project$i") as Pair<*, *>
+                val first = pair.first
+                val second = pair.second
+                if (first is Int && second is String) {
+                    pairList.add(first to second)
+                    stringList.add(second)
                 }
-                else -> project_select_add.error = null
+
+            } catch (e: Exception) {
+                // TODO("프로젝트 목록 전달 오류")
+            }
+        }
+        stringList.add(getString(R.string.add_select_project_new))
+        val projectDropdown = project_select_add.editText as AutoCompleteTextView
+        projectDropdown.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_menu_popup_item, stringList)
+        )
+
+        if (project_count_add.text == "-1") {
+            projectDropdown.setText(stringList[0], false)
+        } else {
+            projectDropdown.setText(
+                pairList.filter { it.first.toString() == project_count_add.text.toString() }[0].second,
+                false
+            )
+        }
+        projectDropdown.setOnItemClickListener { adapter, _, pos, _ ->
+            when (pos) {
+                0 -> {
+                    project_select_add.error = getString(R.string.add_error_blank)
+                    project_count_add.text = "-1"
+                }
+                adapter.count - 1 -> {
+                    setResult(Activity.RESULT_FIRST_USER)
+                    finish()
+                }
+                else -> {
+                    project_select_add.error = null
+                    project_count_add.text = pairList[pos - 1].first.toString()
+                }
             }
         }
     }
 
     private fun initImportance() {
         val importanceDropdown = importance_star_number_add.editText as AutoCompleteTextView
-        setDropdownMenu(this, importanceDropdown, SelectType.IMPORTANCE)
+
+        val importanceList = SelectType.IMPORTANCE.resources(this)
+        importanceDropdown.setAdapter(
+            ArrayAdapter(this, R.layout.dropdown_menu_popup_item, importanceList)
+        )
+        if (importanceDropdown.text.isBlank())
+            importanceDropdown.setText(importanceList[0], false)
+
         importanceDropdown.setOnItemClickListener { _, _, pos, _ ->
             importance_star_bar_add.rating = pos.toFloat()
         }
@@ -294,7 +384,7 @@ class AddActivity : AppCompatActivity() {
         val blankErrorMessage = getString(R.string.add_error_blank)
         var hasError = false
         project_select_add.error = when {
-            mode == Mode.TASK && project_count_add.text == "0" -> {
+            mode == Mode.TASK && project_count_add.text.toString().toInt() < 0 -> {
                 hasError = true
                 blankErrorMessage
             }
@@ -371,5 +461,42 @@ class AddActivity : AppCompatActivity() {
                 // OK, all done. / 추가 작업이 필요하지 않음
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun readData() {
+        val intent = intent
+        project_count_add.text = intent.getIntExtra(extraList[0], -1).toString()
+        intent.getStringExtra(extraList[1])?.let {
+            title_text_add.editText?.setText(it)
+        }
+        importance_star_bar_add.rating = intent.getIntExtra(extraList[2], 0).toFloat()
+        importance_star_number_add.editText?.setText(intent.getIntExtra(extraList[2], 0).toString())
+        val deadline = intent.getLongExtra(extraList[3], 0)
+        if (deadline != 0L) {
+            deadlineCalendar.timeInMillis = deadline
+            deadline_date_add.editText?.setText(
+                DateFormat.format(
+                    "yyyy-MM-dd",
+                    deadlineCalendar
+                )
+            )
+            val deadlineHour = deadlineCalendar[Calendar.HOUR_OF_DAY]
+            val deadlineMinute = deadlineCalendar[Calendar.MINUTE]
+            if (deadlineHour > 0 || deadlineMinute > 0)
+                deadline_time_add.editText?.setText(
+                    "%02d:%02d".format(
+                        deadlineHour,
+                        deadlineMinute
+                    )
+                )
+        }
+        val estimated = intent.getIntExtra(extraList[4], 0)
+        if (estimated != 0) {
+            estimatedHour = estimated / 60
+            estimatedMinute = estimated % 60
+            estimated_time_add.editText?.setText("%02d:%02d".format(estimatedHour, estimatedMinute))
+        }
+        memo_text_add.editText?.setText(intent.getStringExtra(extraList[5]))
     }
 }

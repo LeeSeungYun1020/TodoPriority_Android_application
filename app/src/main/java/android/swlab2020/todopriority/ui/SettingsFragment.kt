@@ -1,4 +1,4 @@
-package android.swlab2020.todopriority.ui.settings
+package android.swlab2020.todopriority.ui
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat

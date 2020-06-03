@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/detail_part_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/detail_part_divider_card"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/detail_part_card" />
+
+    <TextView
+        android:id="@+id/project_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/card_project"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detail_part_divider_card" />
+
+    <TextView
+        android:id="@+id/project_name_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBaseline_toBaselineOf="@id/project_text_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/project_text_card" />
+
+    <TextView
+        android:id="@+id/importance_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/card_importance_text"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/project_text_card"
+        app:layout_goneMarginTop="16dp" />
+
+    <TextView
+        android:id="@+id/importance_number_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/card_score_hint"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBaseline_toBaselineOf="@id/importance_text_card"
+        app:layout_constraintStart_toEndOf="@id/importance_text_card" />
+
+    <TextView
+        android:id="@+id/urgency_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/card_urgency_text"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBaseline_toBaselineOf="@id/importance_text_card"
+        app:layout_constraintStart_toEndOf="@id/importance_number_card" />
+
+    <TextView
+        android:id="@+id/urgency_number_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/card_score_hint"
+        android:textAppearance="?attr/textAppearanceBody1"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintBaseline_toBaselineOf="@id/importance_text_card"
+        app:layout_constraintStart_toEndOf="@id/urgency_text_card" />
+
+    <TextView
+        android:id="@+id/deadline_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/card_deadline"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/importance_text_card" />
+
+    <TextView
+        android:id="@+id/deadline_number_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:hint="@string/card_date_hint"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toEndOf="@id/deadline_text_card"
+        app:layout_constraintTop_toTopOf="@id/deadline_text_card" />
+
+    <TextView
+        android:id="@+id/estimated_time_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/card_estimated_time"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/deadline_text_card" />
+
+    <TextView
+        android:id="@+id/estimated_time_number_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:hint="@string/card_time_hint"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toEndOf="@id/estimated_time_text_card"
+        app:layout_constraintTop_toTopOf="@id/estimated_time_text_card" />
+
+    <TextView
+        android:id="@+id/minimum_start_time_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/card_minimum_start_time"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/estimated_time_text_card" />
+
+    <TextView
+        android:id="@+id/minimum_start_time_number_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:hint="@string/card_date_hint"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toEndOf="@id/minimum_start_time_text_card"
+        app:layout_constraintTop_toTopOf="@id/minimum_start_time_text_card" />
+
+    <TextView
+        android:id="@+id/memo_text_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/card_memo"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="?android:attr/textColorSecondary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/minimum_start_time_text_card" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/action_complete_card"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/card_complete"
+        app:chipIcon="@drawable/ic_card_complete"
+        app:chipIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toTopOf="@id/action_add_task_card"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/memo_text_card"
+        app:layout_goneMarginBottom="16dp"
+        app:layout_goneMarginTop="8dp" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/action_edit_card"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/card_edit"
+        app:chipIcon="@drawable/ic_card_edit"
+        app:chipIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintStart_toEndOf="@id/action_complete_card"
+        app:layout_constraintTop_toTopOf="@id/action_complete_card" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/action_delete_card"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/card_delete"
+        app:chipIcon="@drawable/ic_card_delete"
+        app:chipIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintStart_toEndOf="@id/action_edit_card"
+        app:layout_constraintTop_toTopOf="@id/action_complete_card" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/action_add_task_card"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/card_add_task"
+        android:visibility="gone"
+        app:chipIcon="@drawable/ic_card_add"
+        app:chipIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/action_complete_card" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/action_analyze_card"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="@string/card_analyze"
+        android:visibility="gone"
+        app:chipIcon="@drawable/ic_card_analyze"
+        app:chipIconTint="?android:attr/textColorPrimary"
+        app:layout_constraintStart_toEndOf="@id/action_add_task_card"
+        app:layout_constraintTop_toTopOf="@id/action_add_task_card" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
