@@ -69,4 +69,20 @@
     <string name="card_add_task">할 일 추가</string>
     <string name="card_analyze">분석</string>
     <string name="card_time_over">24시간 이상</string>
+    <string name="add_update">수정</string>
+    <string name="add_title_project_update">프로젝트 수정</string>
+    <string name="add_title_task_update">할 일 수정</string>
+    <string name="main_error_project_add">프로젝트 추가 실패</string>
+    <string name="main_error_project_update">프로젝트 수정 실패</string>
+    <string name="main_error_task_add">프로젝트 추가 실패</string>
+    <string name="main_error_task_update">프로젝트 수정 실패</string>
+    <string name="analyze_task_in_progress">진행 중인 할 일</string>
+    <string name="analyze_task_last">이전 할 일</string>
+    <string name="card_in_progress">진행 중</string>
+    <string name="card_fail">실패</string>
+    <string name="analyze_complete">완료</string>
+    <string name="analyze_fail">실패</string>
+    <string name="dialog_delete">삭제</string>
+    <string name="dialog_delete_msg">삭제 후에는 다시 복구할 수 없습니다.</string>
+    <string name="dialog_cancel">취소</string>
 </resources>

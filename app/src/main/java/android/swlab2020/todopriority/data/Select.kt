@@ -5,6 +5,10 @@ import android.swlab2020.todopriority.R
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 
+enum class SortType {
+    PRIORITY, IMPORTANCE, DEADLINE
+}
+
 enum class SelectType {
     PROJECT {
         override fun resources(context: Context): MutableList<String> {

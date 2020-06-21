@@ -12,6 +12,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.card_detail.view.*
+import kotlinx.android.synthetic.main.card_head.view.*
 import kotlinx.android.synthetic.main.card_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,15 +24,23 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TaskRepository
 
     var sortedTasks: LiveData<List<TaskSummary>>
-    var sortedLastTasks: LiveData<List<TaskSummary>>
-    var detailTask = MutableLiveData<Task>()
+    var sortedTasksImportance: LiveData<List<TaskSummary>>
+    var sortedTasksDeadline: LiveData<List<TaskSummary>>
+    var sortedLastTasksImportance: LiveData<List<TaskSummary>>
+    var sortedLastTasksDeadline: LiveData<List<TaskSummary>>
+    var sortedLastTasksComplete: LiveData<List<TaskSummary>>
+    var detailTask = MutableLiveData<TaskRead>()
     var requestTaskUpdate = MutableLiveData<Task>()
 
     init {
         val taskDao = AppDatabase.getDatabase(application).taskDao()
         repository = TaskRepository(taskDao)
         sortedTasks = repository.priority
-        sortedLastTasks = repository.completeLast
+        sortedTasksImportance = repository.importance
+        sortedTasksDeadline = repository.deadline
+        sortedLastTasksImportance = repository.importanceLast
+        sortedLastTasksDeadline = repository.deadlineLast
+        sortedLastTasksComplete = repository.completeLast
     }
 
     fun loadDetail(id: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -42,8 +51,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(task)
     }
 
-    fun update(task: Task) = viewModelScope.launch(Dispatchers.IO) {
-        repository.update(task)
+    fun update(task: Task, status: Status) = viewModelScope.launch(Dispatchers.IO) {
+        repository.update(task, status)
     }
 
     fun delete(task: Task) = viewModelScope.launch(Dispatchers.IO) {
@@ -93,14 +102,13 @@ class TaskAdapter(
                         else -> R.string.message_start_not_important_4
                     }
             )
-
             importanceScore.text = "${task.importance * 20}"
             var uScore =
                 (100 - (task.deadline - System.currentTimeMillis()) * 0.0000000463).roundToInt()
             if (uScore < 0) uScore = 0
             urgencyScore.text = "$uScore"
             deadlineDetail.text = DateFormat.getDateInstance(DateFormat.FULL)
-                .format(calendar.time) + "  (D-${restDay + 1})"
+                .format(calendar.time) + "  (D%+d)".format(-restDay)
 
 
             expandButton.setOnClickListener {
@@ -115,6 +123,7 @@ class TaskAdapter(
                     if (!hasObserver) {
                         viewModel.detailTask.observe(viewModelOwner, Observer { detail ->
                             if (detail.id == task.id) {
+                                project.text = detail.projectName
                                 val time = detail.estimatedTime
                                 val estimatedCalender = Calendar.getInstance()
                                 estimatedCalender.timeInMillis = task.deadline
@@ -138,13 +147,15 @@ class TaskAdapter(
                                     memo.visibility = View.GONE
                                 }
                             }
-                            updatedTask = detail
+                            updatedTask = detail.toTask()
                         })
 
                         if (!completeChip.hasOnClickListeners())
                             completeChip.setOnClickListener {
+                                val previousStatus = updatedTask.status
                                 updatedTask.status = Status.SUCCESS
-                                viewModel.update(updatedTask)
+                                updatedTask.completeDate = System.currentTimeMillis()
+                                viewModel.update(updatedTask, previousStatus)
                             }
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
@@ -152,8 +163,10 @@ class TaskAdapter(
                             }
                         if (!deleteChip.hasOnClickListeners())
                             deleteChip.setOnClickListener {
+                                val previousStatus = updatedTask.status
                                 updatedTask.status = Status.FAIL
-                                viewModel.update(updatedTask)
+                                updatedTask.completeDate = System.currentTimeMillis()
+                                viewModel.update(updatedTask, previousStatus)
                             }
                         hasObserver = true
                     }
@@ -175,7 +188,6 @@ class TaskAdapter(
 }
 
 class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val card = itemView.card
     val title = itemView.title_card
     val importanceBar = itemView.importance_card
     val deadline = itemView.deadline_card

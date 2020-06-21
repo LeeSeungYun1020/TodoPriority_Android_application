@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.swlab2020.todopriority.AddActivity
 import android.swlab2020.todopriority.AddActivity.Extra.extraList
 import android.swlab2020.todopriority.R
-import android.swlab2020.todopriority.data.FragmentViewModel
-import android.swlab2020.todopriority.data.ProjectAdapter
-import android.swlab2020.todopriority.data.ProjectViewModel
-import android.swlab2020.todopriority.data.SelectType
+import android.swlab2020.todopriority.data.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +22,14 @@ class ProjectsFragment : Fragment() {
 
     private lateinit var projectViewModel: ProjectViewModel
     private lateinit var fragmentViewModel: FragmentViewModel
+    private val projectAdapter: ProjectAdapter by lazy {
+        ProjectAdapter(
+            requireContext(),
+            projectViewModel,
+            viewLifecycleOwner
+        )
+    }
+    private var sort = SortType.PRIORITY
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,42 +37,54 @@ class ProjectsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         fragmentViewModel = ViewModelProvider(this.requireActivity())[FragmentViewModel::class.java]
+        projectViewModel = ViewModelProvider(this).get(ProjectViewModel::class.java)
         return inflater.inflate(R.layout.fragment_projects, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val selector = projects_dropdown_right as AutoCompleteTextView
-        val sortList = SelectType.SORT.resources(requireContext())
-        selector.setAdapter(
-            ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, sortList)
-        )
-        selector.setText(sortList[0], false)
-        // TODO("드롭다운 메뉴 별도 함수로 분리하고 수정")
-        projectViewModel = ViewModelProvider(this).get(ProjectViewModel::class.java)
-        val projectAdapter =
-            ProjectAdapter(
-                requireContext(),
-                projectViewModel,
-                viewLifecycleOwner
-            )
+        super.onViewCreated(view, savedInstanceState)
+        setSortDropdown()
+        setObserver()
         projects_recycler.apply {
             adapter = projectAdapter
             val manager = LinearLayoutManager(requireContext())
             layoutManager = manager
             onScroll(manager)
         }
-        projectViewModel.sortedProjects.observe(viewLifecycleOwner, Observer { projects ->
-            projects?.let {
-                projectAdapter.revalidate(projects)
+    }
+
+    private fun RecyclerView.onScroll(linearLayoutManager: LinearLayoutManager) =
+        addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() <= 0)
+                    fragmentViewModel.fabVisibility.postValue(true)
+                else if (fragmentViewModel.fabVisibility.value == true)
+                    fragmentViewModel.fabVisibility.postValue(false)
             }
         })
+
+    private fun setObserver() {
+        val list = listOf(
+            projectViewModel.sortedProjects,
+            projectViewModel.sortedProjectsImportance,
+            projectViewModel.sortedProjectsDeadline
+        )
+        list.forEachIndexed { i, liveData ->
+            liveData.observe(viewLifecycleOwner, Observer { projects ->
+                projects?.let {
+                    if (SortType.values()[i] == sort)
+                        projectAdapter.revalidate(projects)
+                }
+            })
+        }
         projectViewModel.requestProjectUpdate.observe(viewLifecycleOwner, Observer { project ->
             Intent(requireContext(), AddActivity::class.java).run {
                 putExtra(extraList[1], project.name)
                 putExtra(extraList[2], project.importance)
                 putExtra(extraList[3], project.deadline)
                 putExtra(extraList[5], project.memo)
-                fragmentViewModel.addProject.postValue(this)
+                putExtra(extraList[6], project.id)
+                fragmentViewModel.updateProject.postValue(this)
             }
         })
         projectViewModel.requestTaskAdd.observe(viewLifecycleOwner, Observer { project ->
@@ -76,18 +93,36 @@ class ProjectsFragment : Fragment() {
                 fragmentViewModel.addTask.postValue(this)
             }
         })
-
+        projectViewModel.requestNavigateToAnalyze.observe(viewLifecycleOwner, Observer {
+            if (it != 0)
+                fragmentViewModel.navigateAnalyze.postValue(it)
+        })
     }
 
-    private fun RecyclerView.onScroll(linearLayoutManager: LinearLayoutManager) =
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (linearLayoutManager.findFirstVisibleItemPosition() == 0)
-                    fragmentViewModel.fabVisibility.postValue(true)
-                else if (fragmentViewModel.fabVisibility.value == true)
-                    fragmentViewModel.fabVisibility.postValue(false)
+    private fun setSortDropdown() {
+        val selector = projects_dropdown_right as AutoCompleteTextView
+        val sortList = SelectType.SORT.resources(requireContext())
+        selector.setAdapter(
+            ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, sortList)
+        )
+        selector.setText(sortList[0], false)
+
+        projects_dropdown_right.setOnItemClickListener { _, _, pos, _ ->
+            sort = when (pos) {
+                1 -> (SortType.IMPORTANCE)
+                2 -> (SortType.DEADLINE)
+                else -> (SortType.PRIORITY)
             }
-        })
+            arrangeCards()
+        }
+    }
 
-
+    private fun arrangeCards() {
+        val data = when (sort) {
+            SortType.PRIORITY -> projectViewModel.sortedProjects.value
+            SortType.IMPORTANCE -> projectViewModel.sortedProjectsImportance.value
+            SortType.DEADLINE -> projectViewModel.sortedProjectsDeadline.value
+        }
+        data?.run { projectAdapter.revalidate(this) }
+    }
 }

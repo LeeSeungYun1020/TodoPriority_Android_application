@@ -74,5 +74,22 @@
     <string name="card_add_task">Add task</string>
     <string name="card_analyze">Analyze</string>
     <string name="card_time_over">Over 24h</string>
+    <string name="add_update">Update</string>
+    <string name="add_title_project_update">Update Project</string>
+    <string name="add_title_task_update">Update task</string>
+    <string name="main_error_project_add">Failed to add project.</string>
+    <string name="main_error_project_update">Failed to update project.</string>
+    <string name="main_error_task_add">Failed to add task.</string>
+    <string name="main_error_task_update">Failed to update task.</string>
+    <string name="analyze_task_in_progress">Currently in progress tasks</string>
+    <string name="analyze_task_last">Previous tasks</string>
+    <string name="card_number_hint" translatable="false">00</string>
+    <string name="card_in_progress">In progress</string>
+    <string name="card_fail">Fail</string>
+    <string name="analyze_fail">Fail</string>
+    <string name="analyze_complete">Complete (Done)</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_delete_msg">After deletion, it cannot be recovered.</string>
+    <string name="dialog_cancel">Cancel</string>
 
 </resources>

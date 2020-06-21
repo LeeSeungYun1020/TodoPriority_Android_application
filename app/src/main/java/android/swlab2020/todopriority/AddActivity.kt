@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.swlab2020.todopriority.data.SelectType
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -26,9 +27,18 @@ import kotlin.math.roundToInt
 class AddActivity : AppCompatActivity() {
     companion object Extra {
         val extraList =
-            listOf("project", "title", "importance", "deadline", "estimatedTime", "memo")
+            listOf(
+                "project",
+                "title",
+                "importance",
+                "deadline",
+                "estimatedTime",
+                "memo",
+                "id",
+                "status"
+            )
         enum class Mode(val code: Int) {
-            PROJECT(2101), TASK(2102);
+            PROJECT(2101), TASK(2102), PROJECT_UPDATE(2103), TASK_UPDATE(2104);
 
             companion object {
                 const val code = "mode"
@@ -47,6 +57,8 @@ class AddActivity : AppCompatActivity() {
     private val mode by lazy {
         when (intent.getIntExtra(Mode.code, Mode.PROJECT.code)) {
             Mode.TASK.code -> Mode.TASK
+            Mode.TASK_UPDATE.code -> Mode.TASK_UPDATE
+            Mode.PROJECT_UPDATE.code -> Mode.PROJECT_UPDATE
             else -> Mode.PROJECT
         }
     }
@@ -59,6 +71,9 @@ class AddActivity : AppCompatActivity() {
     private val deadlineCalendar by lazy { Calendar.getInstance() }
     private var estimatedHour = 0
     private var estimatedMinute = 0
+    private val updateID: Int by lazy {
+        intent.getIntExtra(extraList[6], -1)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +83,7 @@ class AddActivity : AppCompatActivity() {
         setMode()
         setType()
         readData()
-        if (mode == Mode.TASK) {
+        if (mode == Mode.TASK || mode == Mode.TASK_UPDATE) {
             initProjectDropdown()
             initEstimatedTime()
         }
@@ -140,14 +155,21 @@ class AddActivity : AppCompatActivity() {
 
     private fun onDone() {
         if (validateEssentialData()) {
+            Log.d("LOG", "ADD VALIDATE PASS")
             val intent = Intent()
             intent.putExtra(Mode.code, mode.code)
             intent.putExtra(extraList[0], project_count_add.text.toString().toInt())
             intent.putExtra(extraList[1], title_text_add.editText?.text.toString())
             intent.putExtra(extraList[2], importance_star_bar_add.rating.roundToInt())
+            if (deadline_time_add.editText?.text?.isEmpty() == true) {
+                deadlineCalendar[Calendar.HOUR_OF_DAY] = 23
+                deadlineCalendar[Calendar.MINUTE] = 59
+            }
             intent.putExtra(extraList[3], deadlineCalendar.timeInMillis)
             intent.putExtra(extraList[4], estimatedHour * 60 + estimatedMinute)
             intent.putExtra(extraList[5], memo_text_add.editText?.text.toString())
+            intent.putExtra(extraList[6], updateID)
+            intent.putExtra(extraList[7], this.intent.getStringExtra(extraList[7]))
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
@@ -384,7 +406,8 @@ class AddActivity : AppCompatActivity() {
         val blankErrorMessage = getString(R.string.add_error_blank)
         var hasError = false
         project_select_add.error = when {
-            mode == Mode.TASK && project_count_add.text.toString().toInt() < 0 -> {
+            (mode == Mode.TASK || mode == Mode.TASK_UPDATE) && project_count_add.text.toString()
+                .toInt() < 0 -> {
                 hasError = true
                 blankErrorMessage
             }
@@ -435,8 +458,19 @@ class AddActivity : AppCompatActivity() {
                 deadline_time_add.visibility = View.GONE
                 estimated_time_add.visibility = View.GONE
             }
+            Mode.PROJECT_UPDATE -> {
+                title = getString(R.string.add_title_project_update)
+                project_select_add.visibility = View.GONE
+                deadline_time_add.visibility = View.GONE
+                estimated_time_add.visibility = View.GONE
+                done_button_add.text = getString(R.string.add_update)
+            }
             Mode.TASK -> {
                 title = getString(R.string.add_title_task)
+            }
+            Mode.TASK_UPDATE -> {
+                title = getString(R.string.add_title_task_update)
+                done_button_add.text = getString(R.string.add_update)
             }
         }
     }

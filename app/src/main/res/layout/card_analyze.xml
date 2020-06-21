@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/stroke_color"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+        <ImageView
+            android:id="@+id/card_analyze_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/card_complete"
+            android:src="@drawable/ic_card_complete"
+            app:layout_constraintEnd_toStartOf="@id/card_analyze_fail"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/card_analyze_fail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/card_fail"
+            android:src="@drawable/ic_card_fail"
+            app:layout_constraintEnd_toStartOf="@id/card_analyze_in_progress"
+            app:layout_constraintStart_toEndOf="@id/card_analyze_complete"
+            app:layout_constraintTop_toTopOf="@id/card_analyze_complete" />
+
+        <ImageView
+            android:id="@+id/card_analyze_in_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/card_in_progress"
+            android:src="@drawable/ic_card_in_progress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/card_analyze_fail"
+            app:layout_constraintTop_toTopOf="@id/card_analyze_complete" />
+
+        <TextView
+            android:id="@+id/card_analyze_complete_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/card_number_hint"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_complete"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_complete"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_complete" />
+
+        <TextView
+            android:id="@+id/card_analyze_fail_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/card_number_hint"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_fail"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_fail"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_fail" />
+
+        <TextView
+            android:id="@+id/card_analyze_in_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/card_number_hint"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_in_progress"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_in_progress"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_in_progress" />
+
+        <TextView
+            android:id="@+id/card_analyze_complete_bar"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="12dp"
+            android:background="#087f23"
+            android:hint="@string/card_number_hint"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintEnd_toStartOf="@id/card_analyze_fail_bar"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_complete_text" />
+
+        <TextView
+            android:id="@+id/card_analyze_fail_bar"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:background="#ba000d"
+            android:hint="@string/card_number_hint"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintBottom_toBottomOf="@id/card_analyze_complete_bar"
+            app:layout_constraintEnd_toStartOf="@id/card_analyze_in_progress_bar"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toEndOf="@id/card_analyze_complete_bar"
+            app:layout_constraintTop_toTopOf="@id/card_analyze_complete_bar" />
+
+        <TextView
+            android:id="@+id/card_analyze_in_progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:background="#0069c0"
+            android:hint="@string/card_number_hint"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintBottom_toBottomOf="@id/card_analyze_complete_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toEndOf="@id/card_analyze_fail_bar"
+            app:layout_constraintTop_toTopOf="@id/card_analyze_complete_bar" />
+
+        <TextView
+            android:id="@+id/card_analyze_complete_description"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:text="@string/card_complete"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_complete_bar"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_complete_bar"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_complete_bar" />
+
+        <TextView
+            android:id="@+id/card_analyze_fail_description"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:text="@string/card_fail"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_fail_bar"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_fail_bar"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_fail_bar" />
+
+        <TextView
+            android:id="@+id/card_analyze_in_progress_description"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:text="@string/card_in_progress"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintEnd_toEndOf="@id/card_analyze_in_progress_bar"
+            app:layout_constraintStart_toStartOf="@id/card_analyze_in_progress_bar"
+            app:layout_constraintTop_toBottomOf="@id/card_analyze_in_progress_bar" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

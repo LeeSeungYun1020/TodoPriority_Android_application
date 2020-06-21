@@ -12,6 +12,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.card_detail.view.*
+import kotlinx.android.synthetic.main.card_head.view.*
 import kotlinx.android.synthetic.main.card_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,16 +24,23 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
     private val repository: ProjectRepository
 
     var sortedProjects: LiveData<List<ProjectSummary>>
+    var sortedProjectsImportance: LiveData<List<ProjectSummary>>
+    var sortedProjectsDeadline: LiveData<List<ProjectSummary>>
     var sortedLastProjects: LiveData<List<ProjectSummary>>
     val simpleProjects: LiveData<List<ProjectSimple>>
     var detailProject = MutableLiveData<Project>()
+
     var requestProjectUpdate = MutableLiveData<Project>()
     var requestTaskAdd = MutableLiveData<Project>()
+    var requestNavigateToAnalyze: MutableLiveData<Int> = MutableLiveData(-1)
+
 
     init {
         val projectDao = AppDatabase.getDatabase(application).projectDao()
         repository = ProjectRepository(projectDao)
         sortedProjects = repository.priority
+        sortedProjectsImportance = repository.importance
+        sortedProjectsDeadline = repository.deadline
         sortedLastProjects = repository.priorityLast
         simpleProjects = repository.simple
     }
@@ -95,7 +103,7 @@ class ProjectAdapter(
                         in 30..90 -> R.string.message_start_not_important_3
                         else -> R.string.message_start_not_important_4
                     }
-            )// TODO("설정에서 조절")
+            )
 
             importanceScore.text = "${project.importance * 20}"
             var uScore =
@@ -103,7 +111,7 @@ class ProjectAdapter(
             if (uScore < 0) uScore = 0
             urgencyScore.text = "$uScore"
             deadlineDetail.text = DateFormat.getDateInstance(DateFormat.FULL)
-                .format(calendar.time) + "  (D-${restDay + 1})"
+                .format(calendar.time) + "  (D%+d)".format(-restDay)
 
 
             expandButton.setOnClickListener {
@@ -144,12 +152,11 @@ class ProjectAdapter(
                             }
                         if (!taskChip.hasOnClickListeners())
                             taskChip.setOnClickListener {
-                                // TODO("AddActivity - task 호출(project 선지정)")
                                 viewModel.requestTaskAdd.postValue(updatedProject)
                             }
                         if (!analyzChip.hasOnClickListeners())
                             analyzChip.setOnClickListener {
-                                // TODO("")
+                                viewModel.requestNavigateToAnalyze.postValue(updatedProject.id)
                             }
                         hasObserver = true
                     }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/detail_part_card"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp">
 
     <View
         android:id="@+id/detail_part_divider_card"
@@ -203,8 +204,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="@string/card_delete"
-        app:chipIcon="@drawable/ic_card_delete"
+        android:text="@string/card_fail"
+        app:chipIcon="@drawable/ic_card_fail"
         app:chipIconTint="?android:attr/textColorPrimary"
         app:layout_constraintStart_toEndOf="@id/action_edit_card"
         app:layout_constraintTop_toTopOf="@id/action_complete_card" />
@@ -216,7 +217,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
         android:text="@string/card_add_task"
         android:visibility="gone"
         app:chipIcon="@drawable/ic_card_add"

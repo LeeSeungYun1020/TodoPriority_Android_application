@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     tools:context="android.swlab2020.todopriority.ui.AnalyzeFragment">
 
-    <TextView
-        android:id="@+id/text_analyze"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
+        android:id="@+id/analyze_recycler"
         android:layout_height="match_parent" />
 
 </FrameLayout>

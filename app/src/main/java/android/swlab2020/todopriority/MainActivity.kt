@@ -15,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -28,11 +29,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var projectSimpleList: List<ProjectSimple>
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var fragmentViewModel: FragmentViewModel
+    private var restartAddTaskFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q)
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
-        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
@@ -71,6 +72,13 @@ class MainActivity : AppCompatActivity() {
         projectSimpleList = projectViewModel.simpleProjects.value ?: emptyList()
         projectViewModel.simpleProjects.observe(this, Observer { projects ->
             this.projectSimpleList = projects
+            if (restartAddTaskFlag) {
+                restartAddTaskFlag = false
+                val intent = Intent(this, AddActivity::class.java).apply {
+                    putExtra(AddActivity.extraList[0], projects.maxBy { it.id }?.id ?: -1)
+                }
+                startAddActivityForTask(intent)
+            }
             Log.d("LOG", "list updated")
         })
         taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
@@ -88,6 +96,16 @@ class MainActivity : AppCompatActivity() {
         fragmentViewModel.addTask.observe(this, Observer { intent ->
             startAddActivityForTask(intent)
         })
+        fragmentViewModel.updateProject.observe(this, Observer { intent ->
+            startAddActivityForProject(intent, update = true)
+        })
+        fragmentViewModel.updateTask.observe(this, Observer { intent ->
+            startAddActivityForTask(intent, update = true)
+        })
+        fragmentViewModel.navigateAnalyze.observe(this, Observer {
+            if (it != -1)
+                navController.navigate(R.id.nav_analyze)
+        })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -95,58 +113,96 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun insertProject(data: Intent) {
+    private fun insertProject(data: Intent, update: Boolean = false) {
         val name = data.getStringExtra(AddActivity.extraList[1])
         val importance = data.getIntExtra(AddActivity.extraList[2], -1)
         val deadline = data.getLongExtra(AddActivity.extraList[3], 0)
         if (name.isNullOrBlank() || importance < 0 || deadline < System.currentTimeMillis()) {
-            onInsertProjectError()
+            onInsertProjectError(update)
         } else {
             val memo = data.getStringExtra(AddActivity.extraList[5])
             val project = Project(name, importance, deadline, memo)
-            projectViewModel.insert(project)
+            if (update) {
+                project.id = data.getIntExtra(AddActivity.extraList[6], -1)
+                projectViewModel.update(project)
+            } else {
+                projectViewModel.insert(project)
+            }
             Log.d("LOG", "INSERT")
         }
     }
 
-    private fun insertTask(data: Intent) {
-        val id = data.getIntExtra(AddActivity.extraList[0], -1)
+    private fun insertTask(data: Intent, update: Boolean = false) {
+        val projectId = data.getIntExtra(AddActivity.extraList[0], -1)
         val name = data.getStringExtra(AddActivity.extraList[1])
         val importance = data.getIntExtra(AddActivity.extraList[2], -1)
         val deadline = data.getLongExtra(AddActivity.extraList[3], 0)
-        if (id < 0 || name.isNullOrBlank() || importance < 0 || deadline < System.currentTimeMillis()) {
-            onInsertTaskError()
+        if (projectId < 0 || name.isNullOrBlank() || importance < 0 || deadline < System.currentTimeMillis()) {
+            onInsertTaskError(update)
         } else {
             var estimatedTime = data.getIntExtra(AddActivity.extraList[4], 0)
             val memo = data.getStringExtra(AddActivity.extraList[5])
             if (estimatedTime <= 0)
                 estimatedTime = 24 * 60
-            val task = Task(id, name, importance, deadline, estimatedTime, memo)
-            taskViewModel.insert(task)
+            val task = Task(projectId, name, importance, deadline, estimatedTime, memo)
+            Log.d("LOG", "update = $update")
+            if (update) {
+                task.id = data.getIntExtra(AddActivity.extraList[6], -1)
+                task.status = Status.IN_PROGRESS
+                val status = when (data.getStringExtra(AddActivity.extraList[7])) {
+                    Status.IN_PROGRESS.toString() -> Status.IN_PROGRESS
+                    Status.SUCCESS.toString() -> Status.SUCCESS
+                    Status.FAIL.toString() -> Status.FAIL
+                    else -> Status.IN_PROGRESS
+                }
+                taskViewModel.update(task, status)
+            } else {
+                taskViewModel.insert(task)
+            }
         }
     }
 
-    private fun onInsertProjectError() {
-        // TODO("프로젝트 추가 실패")
+    private fun onInsertProjectError(update: Boolean) {
+        if (update)
+            Snackbar.make(main_fab, R.string.main_error_project_update, Snackbar.LENGTH_LONG).show()
+        else
+            Snackbar.make(main_fab, R.string.main_error_project_add, Snackbar.LENGTH_LONG).show()
     }
 
-    private fun onInsertTaskError() {
-        // TODO("할 일 추가 실패")
+    private fun onInsertTaskError(update: Boolean) {
+        if (update)
+            Snackbar.make(main_fab, R.string.main_error_task_update, Snackbar.LENGTH_LONG).show()
+        else
+            Snackbar.make(main_fab, R.string.main_error_task_add, Snackbar.LENGTH_LONG).show()
     }
 
-    private fun startAddActivityForProject(data: Intent? = null, requestCode: Int? = null) {
+    private fun startAddActivityForProject(
+        data: Intent? = null,
+        requestCode: Int? = null,
+        update: Boolean = false
+    ) {
         val intent = data ?: Intent(this, AddActivity::class.java)
-        intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.PROJECT.code)
+        if (update)
+            intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.PROJECT_UPDATE.code)
+        else
+            intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.PROJECT.code)
         startActivityForResult(intent, requestCode ?: ADD_ACTIVITY)
     }
 
-    private fun startAddActivityForTask(data: Intent? = null, requestCode: Int? = null) {
+    private fun startAddActivityForTask(
+        data: Intent? = null,
+        requestCode: Int? = null,
+        update: Boolean = false
+    ) {
         val intent = data ?: Intent(this, AddActivity::class.java)
         intent.putExtra("size", projectSimpleList.size)
         projectSimpleList.forEachIndexed { index, project ->
             intent.putExtra("project$index", Pair(project.id, project.name))
         }
-        intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.TASK.code)
+        if (update)
+            intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.TASK_UPDATE.code)
+        else
+            intent.putExtra(AddActivity.Extra.Mode.code, AddActivity.Extra.Mode.TASK.code)
         startActivityForResult(intent, requestCode ?: ADD_ACTIVITY)
     }
 
@@ -158,8 +214,12 @@ class MainActivity : AppCompatActivity() {
                         if (data != null)
                             when (data.getIntExtra(AddActivity.Extra.Mode.code, 0)) {
                                 AddActivity.Extra.Mode.PROJECT.code -> insertProject(data)
+                                AddActivity.Extra.Mode.PROJECT_UPDATE.code -> insertProject(
+                                    data,
+                                    true
+                                )
                                 AddActivity.Extra.Mode.TASK.code -> insertTask(data)
-                                //else -> error
+                                AddActivity.Extra.Mode.TASK_UPDATE.code -> insertTask(data, true)
                             }
                     }
                     Activity.RESULT_FIRST_USER -> {
@@ -170,16 +230,17 @@ class MainActivity : AppCompatActivity() {
             ADD_ACTIVITY_TASK_TO_PROJECT -> {
                 when (resultCode) {
                     Activity.RESULT_OK -> {
-                        if (data != null)
+                        if (data != null) {
                             insertProject(data)
+                            restartAddTaskFlag = true
+                        }
+                    }
+                    Activity.RESULT_CANCELED -> {
+                        startAddActivityForTask()
                     }
                 }
-                startAddActivityForTask()
-                Log.d("LOG", "start ADD")
-                // TODO("데이터베이스 저장 대기 다이얼로그 추가")
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
-
 }

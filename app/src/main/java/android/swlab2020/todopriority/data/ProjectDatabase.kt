@@ -42,7 +42,12 @@ interface ProjectDao {
     fun loadSimple(nowInMillis: Long): LiveData<List<ProjectSimple>>
 
     // 기한내 진행 중인 프로젝트 우선순위 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY importance + (100 - (deadline - :nowInMillis) * 0.0000000463) DESC")
+    @Query(
+        "SELECT id, name, importance, deadline FROM projects " +
+                "WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis " +
+                "ORDER BY CASE WHEN ((deadline - :nowInMillis) * 0.0000000463) >= 100 THEN (importance * 20) " +
+                "ELSE (importance * 20 + ROUND(100 - (deadline - :nowInMillis) * 0.0000000463)) END DESC, importance DESC"
+    )
     fun load(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // 기한내 진행 중인 프로젝트 중요도 높은 순으로 가져옴

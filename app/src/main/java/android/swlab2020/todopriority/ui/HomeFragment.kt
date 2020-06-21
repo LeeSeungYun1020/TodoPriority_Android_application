@@ -22,6 +22,15 @@ class HomeFragment : Fragment() {
     private lateinit var projectViewModel: ProjectViewModel
     private lateinit var projectSimpleList: List<ProjectSimple>
     private lateinit var fragmentViewModel: FragmentViewModel
+    private val taskAdapter: TaskAdapter by lazy {
+        TaskAdapter(
+            requireContext(),
+            taskViewModel,
+            viewLifecycleOwner
+        )
+    }
+    private var sort = SortType.PRIORITY
+    private var projectId = -1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,41 +51,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setProjectDropdown()
-
-        val selector = home_dropdown_right as AutoCompleteTextView
-        val sortList = SelectType.SORT.resources(requireContext())
-        selector.setAdapter(
-            ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, sortList)
-        )
-        selector.setText(sortList[0], false)
-        val taskAdapter =
-            TaskAdapter(
-                requireContext(),
-                taskViewModel,
-                viewLifecycleOwner
-            )
+        setSortDropdown()
+        setObserver()
         home_recycler.apply {
             adapter = taskAdapter
             val manager = LinearLayoutManager(requireContext())
             layoutManager = manager
             onScroll(manager)
         }
-        taskViewModel.sortedTasks.observe(viewLifecycleOwner, Observer { tasks ->
-            tasks?.let {
-                taskAdapter.revalidate(tasks)
-            }
-        })
-        taskViewModel.requestTaskUpdate.observe(viewLifecycleOwner, Observer { task ->
-            Intent(requireContext(), AddActivity::class.java).run {
-                putExtra(AddActivity.extraList[0], task.projectId)
-                putExtra(AddActivity.extraList[1], task.name)
-                putExtra(AddActivity.extraList[2], task.importance)
-                putExtra(AddActivity.extraList[3], task.deadline)
-                putExtra(AddActivity.extraList[4], task.estimatedTime)
-                putExtra(AddActivity.extraList[5], task.memo)
-                fragmentViewModel.addTask.postValue(this)
-            }
-        })
     }
 
     private fun setProjectDropdown() {
@@ -89,24 +71,82 @@ class HomeFragment : Fragment() {
         selector.setText(nameList[0], false)
 
         home_dropdown_left.setOnItemClickListener { _, _, pos, _ ->
-            when (pos) {
-                0 -> {
-                }//TODO("전체 할 일 모두 표시")
-                else -> {
-                    projectSimpleList[pos - 1].id // 프로젝트 id
-                    //TODO("해당 프로젝트 내용만 표시")
-                }
+            projectId = when (pos) {
+                0 -> -1
+                else -> projectSimpleList[pos - 1].id // 프로젝트 id
             }
+            arrangeCards()
+        }
+    }
+
+    private fun setSortDropdown() {
+        val selector = home_dropdown_right as AutoCompleteTextView
+        val sortList = SelectType.SORT.resources(requireContext())
+        selector.setAdapter(
+            ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, sortList)
+        )
+        selector.setText(sortList[0], false)
+
+        home_dropdown_right.setOnItemClickListener { _, _, pos, _ ->
+            sort = when (pos) {
+                1 -> (SortType.IMPORTANCE)
+                2 -> (SortType.DEADLINE)
+                else -> (SortType.PRIORITY)
+            }
+            arrangeCards()
         }
     }
 
     private fun RecyclerView.onScroll(linearLayoutManager: LinearLayoutManager) =
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (linearLayoutManager.findFirstVisibleItemPosition() == 0)
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() <= 0) {
                     fragmentViewModel.fabVisibility.postValue(true)
-                else if (fragmentViewModel.fabVisibility.value == true)
+                } else if (fragmentViewModel.fabVisibility.value == true) {
                     fragmentViewModel.fabVisibility.postValue(false)
+                }
             }
         })
+
+    private fun setObserver() {
+        val list = listOf(
+            taskViewModel.sortedTasks,
+            taskViewModel.sortedTasksImportance,
+            taskViewModel.sortedTasksDeadline
+        )
+        list.forEachIndexed { i, liveData ->
+            liveData.observe(viewLifecycleOwner, Observer { tasks ->
+                tasks?.let {
+                    if (SortType.values()[i] == sort)
+                        taskAdapter.revalidate(tasks)
+                }
+            })
+        }
+        taskViewModel.requestTaskUpdate.observe(viewLifecycleOwner, Observer { task ->
+            Intent(requireContext(), AddActivity::class.java).run {
+                putExtra(AddActivity.extraList[0], task.projectId)
+                putExtra(AddActivity.extraList[1], task.name)
+                putExtra(AddActivity.extraList[2], task.importance)
+                putExtra(AddActivity.extraList[3], task.deadline)
+                putExtra(AddActivity.extraList[4], task.estimatedTime)
+                putExtra(AddActivity.extraList[5], task.memo)
+                putExtra(AddActivity.extraList[6], task.id)
+                putExtra(AddActivity.extraList[7], task.status)
+                fragmentViewModel.updateTask.postValue(this)
+            }
+        })
+    }
+
+    private fun arrangeCards() {
+        var data = when (sort) {
+            SortType.PRIORITY -> taskViewModel.sortedTasks.value
+            SortType.IMPORTANCE -> taskViewModel.sortedTasksImportance.value
+            SortType.DEADLINE -> taskViewModel.sortedTasksDeadline.value
+        }
+        if (data != null) {
+            if (projectId != -1)
+                data = data.filter { it.projectId == projectId }
+            taskAdapter.revalidate(data)
+        }
+    }
 }
