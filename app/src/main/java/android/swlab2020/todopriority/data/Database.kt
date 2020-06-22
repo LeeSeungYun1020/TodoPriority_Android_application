@@ -19,7 +19,7 @@ class StatusConverters {
     }
 }
 
-@Database(entities = [Project::class, Task::class], version = 1, exportSchema = false)
+@Database(entities = [Project::class, Task::class], version = 2, exportSchema = false)
 @TypeConverters(StatusConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun projectDao(): ProjectDao

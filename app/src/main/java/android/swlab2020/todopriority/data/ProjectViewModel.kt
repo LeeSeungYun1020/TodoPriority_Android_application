@@ -8,9 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.card_detail.view.*
 import kotlinx.android.synthetic.main.card_head.view.*
 import kotlinx.android.synthetic.main.card_item.view.*
@@ -27,6 +31,8 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
     var sortedProjectsImportance: LiveData<List<ProjectSummary>>
     var sortedProjectsDeadline: LiveData<List<ProjectSummary>>
     var sortedLastProjects: LiveData<List<ProjectSummary>>
+    var sortedLastProjectsImportance: LiveData<List<ProjectSummary>>
+    var sortedLastProjectsDeadline: LiveData<List<ProjectSummary>>
     val simpleProjects: LiveData<List<ProjectSimple>>
     var detailProject = MutableLiveData<Project>()
 
@@ -42,6 +48,8 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
         sortedProjectsImportance = repository.importance
         sortedProjectsDeadline = repository.deadline
         sortedLastProjects = repository.priorityLast
+        sortedLastProjectsImportance = repository.importanceLast
+        sortedLastProjectsDeadline = repository.deadlineLast
         simpleProjects = repository.simple
     }
 
@@ -81,7 +89,7 @@ class ProjectAdapter(
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val project = projects[position]
         holder.apply {
-            //card.setCardBackgroundColor(context.getColor(android.R.color.white))
+            color.setCardBackgroundColor(project.color)
             title.text = project.name
             importanceBar.rating = project.importance.toFloat()
             val calendar = Calendar.getInstance()
@@ -154,8 +162,8 @@ class ProjectAdapter(
                             taskChip.setOnClickListener {
                                 viewModel.requestTaskAdd.postValue(updatedProject)
                             }
-                        if (!analyzChip.hasOnClickListeners())
-                            analyzChip.setOnClickListener {
+                        if (!analyzeChip.hasOnClickListeners())
+                            analyzeChip.setOnClickListener {
                                 viewModel.requestNavigateToAnalyze.postValue(updatedProject.id)
                             }
                         hasObserver = true
@@ -174,27 +182,27 @@ class ProjectAdapter(
 }
 
 class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val card = itemView.card
-    val title = itemView.title_card
-    val importanceBar = itemView.importance_card
-    val deadline = itemView.deadline_card
-    val startMessage = itemView.message_card
+    val title: TextView = itemView.title_card
+    val color: MaterialCardView = itemView.color_card
+    val importanceBar: RatingBar = itemView.importance_card
+    val deadline: TextView = itemView.deadline_card
+    val startMessage: TextView = itemView.message_card
 
-    val importanceScore = itemView.importance_number_card
-    val urgencyScore = itemView.urgency_number_card
-    val deadlineDetail = itemView.deadline_number_card
+    val importanceScore: TextView = itemView.importance_number_card
+    val urgencyScore: TextView = itemView.urgency_number_card
+    val deadlineDetail: TextView = itemView.deadline_number_card
 
     //val estimatedTime = itemView.estimated_time_number_card
     //val minimumStartTime = itemView.minimum_start_time_number_card
-    val memo = itemView.memo_text_card
+    val memo: TextView = itemView.memo_text_card
 
-    val expandButton = itemView.expand_icon_card
-    val detailLayout = itemView.card_detail_layout
-    val completeChip = itemView.action_complete_card
-    val editChip = itemView.action_edit_card
-    val deleteChip = itemView.action_delete_card
-    val taskChip = itemView.action_add_task_card
-    val analyzChip = itemView.action_analyze_card
+    val expandButton: ImageView = itemView.expand_icon_card
+    val detailLayout: View = itemView.card_detail_layout
+    val completeChip: Chip = itemView.action_complete_card
+    val editChip: Chip = itemView.action_edit_card
+    val deleteChip: Chip = itemView.action_delete_card
+    val taskChip: Chip = itemView.action_add_task_card
+    val analyzeChip: Chip = itemView.action_analyze_card
 
     lateinit var updatedProject: Project
     var isExpand = false
@@ -211,6 +219,6 @@ class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             minimum_start_time_number_card.visibility = View.GONE
         }
         taskChip.visibility = View.VISIBLE
-        analyzChip.visibility = View.VISIBLE
+        analyzeChip.visibility = View.VISIBLE
     }
 }

@@ -7,14 +7,29 @@
     android:layout_marginVertical="16dp"
     android:layout_marginStart="16dp">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/color_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/deadline_card"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title_card"
+        app:strokeColor="@color/stroke_color"
+        app:strokeWidth="1dp" />
+
     <TextView
         android:id="@+id/title_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/card_title"
         android:textAppearance="?attr/textAppearanceHeadline6"
+        android:layout_marginStart="16dp"
         app:layout_constraintEnd_toStartOf="@id/expand_icon_card"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/color_card"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RatingBar
@@ -22,10 +37,11 @@
         style="@android:style/Widget.Material.RatingBar.Small"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
         android:numStars="5"
         app:layout_constraintBottom_toBottomOf="@id/deadline_card"
         app:layout_constraintEnd_toStartOf="@id/deadline_card"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/color_card"
         app:layout_constraintTop_toTopOf="@id/deadline_card" />
 
     <TextView

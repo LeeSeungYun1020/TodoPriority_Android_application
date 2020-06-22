@@ -1,6 +1,8 @@
 package android.swlab2020.todopriority.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.swlab2020.todopriority.AddActivity
 import android.swlab2020.todopriority.R
 import android.swlab2020.todopriority.data.*
 import android.util.Log
@@ -22,6 +24,7 @@ class AnalyzeFragment : Fragment() {
         AnalyzeAdapter(
             requireContext(),
             analyzeViewModel,
+            projectViewModel,
             taskViewModel,
             viewLifecycleOwner
         )
@@ -80,21 +83,49 @@ class AnalyzeFragment : Fragment() {
                 }
             })
         }
+
+        val projectList = listOf(
+            projectViewModel.sortedProjects,
+            projectViewModel.sortedProjectsImportance,
+            projectViewModel.sortedProjectsDeadline
+        )
+        projectList.forEachIndexed { index, liveData ->
+            liveData.observe(viewLifecycleOwner, Observer { tasks ->
+                tasks?.let {
+                    if (sortType.ordinal == index)
+                        analyzeAdapter.revalidateProjects(it)
+                }
+            })
+        }
+        val projectLastList = listOf(
+            projectViewModel.sortedLastProjects,
+            projectViewModel.sortedLastProjectsImportance,
+            projectViewModel.sortedLastProjectsDeadline
+        )
+        projectLastList.forEachIndexed { index, liveData ->
+            liveData.observe(viewLifecycleOwner, Observer { tasks ->
+                tasks?.let {
+                    if (sortType.ordinal == index)
+                        analyzeAdapter.revalidateLastProjects(it)
+                }
+            })
+        }
         analyzeViewModel.requestSort.observe(viewLifecycleOwner, Observer { sort ->
             sortType = sort
             Log.d("LOG", "change sort : $sortType")
             when (sortType) {
                 SortType.PRIORITY -> {
                     taskViewModel.sortedTasks.value?.let {
-                        analyzeAdapter.revalidateTasks(it);Log.d(
-                        "LOG",
-                        "$it"
-                    )
+                        analyzeAdapter.revalidateTasks(it)
                     }
                     taskViewModel.sortedLastTasksComplete.value?.let {
-                        analyzeAdapter.revalidateLastTasks(
-                            it
-                        )
+                        analyzeAdapter.revalidateLastTasks(it)
+                    }
+                    projectViewModel.sortedProjects.value?.let {
+                        analyzeAdapter.revalidateProjects(it)
+                    }
+                    projectViewModel.sortedLastProjects.value?.let {
+                        analyzeAdapter.revalidateLastProjects(it)
                     }
                 }
                 SortType.IMPORTANCE -> {
@@ -104,11 +135,25 @@ class AnalyzeFragment : Fragment() {
                     taskViewModel.sortedLastTasksImportance.value?.let {
                         analyzeAdapter.revalidateLastTasks(it)
                     }
+                    projectViewModel.sortedProjectsImportance.value?.let {
+                        analyzeAdapter.revalidateProjects(it)
+                    }
+                    projectViewModel.sortedLastProjectsImportance.value?.let {
+                        analyzeAdapter.revalidateLastProjects(it)
+                    }
                 }
                 SortType.DEADLINE -> {
-                    taskViewModel.sortedTasksDeadline.value?.let { analyzeAdapter.revalidateTasks(it) }
+                    taskViewModel.sortedTasksDeadline.value?.let {
+                        analyzeAdapter.revalidateTasks(it)
+                    }
                     taskViewModel.sortedLastTasksDeadline.value?.let {
                         analyzeAdapter.revalidateLastTasks(it)
+                    }
+                    projectViewModel.sortedProjectsDeadline.value?.let {
+                        analyzeAdapter.revalidateProjects(it)
+                    }
+                    projectViewModel.sortedLastProjectsDeadline.value?.let {
+                        analyzeAdapter.revalidateLastProjects(it)
                     }
                 }
             }
@@ -126,6 +171,22 @@ class AnalyzeFragment : Fragment() {
         })
         projectViewModel.detailProject.observe(viewLifecycleOwner, Observer {
             analyzeAdapter.revalidateProject(it)
+        })
+        projectViewModel.requestProjectUpdate.observe(viewLifecycleOwner, Observer { project ->
+            Intent(requireContext(), AddActivity::class.java).run {
+                putExtra(AddActivity.extraList[1], project.name)
+                putExtra(AddActivity.extraList[2], project.importance)
+                putExtra(AddActivity.extraList[3], project.deadline)
+                putExtra(AddActivity.extraList[5], project.memo)
+                putExtra(AddActivity.extraList[6], project.id)
+                fragmentViewModel.updateProject.postValue(this)
+            }
+        })
+        projectViewModel.requestTaskAdd.observe(viewLifecycleOwner, Observer { project ->
+            Intent(requireContext(), AddActivity::class.java).run {
+                putExtra(AddActivity.extraList[0], project.id)
+                fragmentViewModel.addTask.postValue(this)
+            }
         })
     }
 

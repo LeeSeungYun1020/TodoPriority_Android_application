@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/card_number_hint"
             android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@id/card_analyze_complete"
             app:layout_constraintStart_toStartOf="@id/card_analyze_complete"
             app:layout_constraintTop_toBottomOf="@id/card_analyze_complete" />
@@ -59,6 +60,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/card_number_hint"
             android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@id/card_analyze_fail"
             app:layout_constraintStart_toStartOf="@id/card_analyze_fail"
             app:layout_constraintTop_toBottomOf="@id/card_analyze_fail" />
@@ -69,6 +71,7 @@
             android:layout_height="wrap_content"
             android:hint="@string/card_number_hint"
             android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="@id/card_analyze_in_progress"
             app:layout_constraintStart_toStartOf="@id/card_analyze_in_progress"
             app:layout_constraintTop_toBottomOf="@id/card_analyze_in_progress" />

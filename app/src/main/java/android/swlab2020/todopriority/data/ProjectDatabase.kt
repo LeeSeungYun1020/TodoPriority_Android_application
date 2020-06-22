@@ -5,6 +5,7 @@ import androidx.room.*
 
 @Entity(tableName = "projects")
 data class Project(
+    var color: Int,
     var name: String,
     var importance: Int,
     var deadline: Long,
@@ -25,12 +26,14 @@ data class Project(
 }
 
 data class ProjectSummary(
+    var color: Int,
     val name: String,
     val importance: Int,
     val deadline: Long
 ) {
     @PrimaryKey
     var id: Int = 0
+    var status: Status = Status.IN_PROGRESS
 }
 
 data class ProjectSimple(val id: Int, val name: String)
@@ -43,7 +46,7 @@ interface ProjectDao {
 
     // 기한내 진행 중인 프로젝트 우선순위 순으로 가져옴
     @Query(
-        "SELECT id, name, importance, deadline FROM projects " +
+        "SELECT id, name, importance, deadline, status, color FROM projects " +
                 "WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis " +
                 "ORDER BY CASE WHEN ((deadline - :nowInMillis) * 0.0000000463) >= 100 THEN (importance * 20) " +
                 "ELSE (importance * 20 + ROUND(100 - (deadline - :nowInMillis) * 0.0000000463)) END DESC, importance DESC"
@@ -51,28 +54,34 @@ interface ProjectDao {
     fun load(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // 기한내 진행 중인 프로젝트 중요도 높은 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY importance DESC")
+    @Query("SELECT id, name, importance, deadline, status, color FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY importance DESC")
     fun loadByImportance(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // 기한내 진행 중인 프로젝트 기한 가까운 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY deadline")
+    @Query("SELECT id, name, importance, deadline, status, color FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY deadline")
     fun loadByDeadline(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
-    // 기한 지난 모든 프로젝트 우선순위 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE deadline < :nowInMillis  ORDER BY importance + 100 - (deadline - :nowInMillis) * 0.0000000463 DESC")
-    fun loadLast(nowInMillis: Long): LiveData<List<ProjectSummary>>
+    // 기한 지난 모든 프로젝트 완료 날짜 순으로 가져옴
+    @Query("SELECT id, name, importance, deadline, status, color FROM projects WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY complete_date DESC")
+    fun loadLastByCompleteDate(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // 기한 지난 모든 프로젝트 중요도 높은 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE deadline < :nowInMillis ORDER BY importance DESC")
+    @Query("SELECT id, name, importance, deadline, status, color FROM projects WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY importance DESC")
     fun loadLastByImportance(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // 기한 지난 모든 프로젝트 기한 가까운 순으로 가져옴
-    @Query("SELECT id, name, importance, deadline FROM projects WHERE deadline < :nowInMillis ORDER BY deadline")
+    @Query("SELECT id, name, importance, deadline, status, color FROM projects WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY deadline")
     fun loadLastByDeadline(nowInMillis: Long): LiveData<List<ProjectSummary>>
 
     // id로 프로젝트 세부 정보 조회
     @Query("SELECT * FROM projects WHERE id=:id")
     suspend fun loadDetailById(id: Int): Project
+
+    @Query("UPDATE tasks SET status = :status WHERE project_id = :id and status = 'IN_PROGRESS'")
+    suspend fun syncTaskStatus(id: Int, status: Status)
+
+    @Query("UPDATE tasks SET status = 'FAIL' WHERE project_id = :id and deadline < :nowInMillis")
+    suspend fun validTaskStatus(id: Int, nowInMillis: Long)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(project: Project)
@@ -91,7 +100,7 @@ class ProjectRepository(private val projectDao: ProjectDao) {
     val priority = projectDao.load(System.currentTimeMillis())
     val importance = projectDao.loadByImportance(System.currentTimeMillis())
     val deadline = projectDao.loadByDeadline(System.currentTimeMillis())
-    val priorityLast = projectDao.loadLast(System.currentTimeMillis())
+    val priorityLast = projectDao.loadLastByCompleteDate(System.currentTimeMillis())
     val importanceLast = projectDao.loadLastByImportance(System.currentTimeMillis())
     val deadlineLast = projectDao.loadLastByDeadline(System.currentTimeMillis())
 
@@ -105,6 +114,9 @@ class ProjectRepository(private val projectDao: ProjectDao) {
 
     suspend fun update(project: Project) {
         projectDao.update(project)
+        if (project.status != Status.IN_PROGRESS)
+            projectDao.syncTaskStatus(project.id, project.status)
+        projectDao.validTaskStatus(project.id, System.currentTimeMillis())
     }
 
     suspend fun delete(project: Project) {

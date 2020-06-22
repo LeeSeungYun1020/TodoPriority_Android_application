@@ -8,9 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
+import android.widget.TextView
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.chip.Chip
 import kotlinx.android.synthetic.main.card_detail.view.*
 import kotlinx.android.synthetic.main.card_head.view.*
 import kotlinx.android.synthetic.main.card_item.view.*
@@ -79,7 +83,7 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
         holder.apply {
-            //card.setCardBackgroundColor(context.getColor(android.R.color.white)) TODO("색 지정 고려")
+            color.setCardBackgroundColor(task.projectColor)
             title.text = task.name
             importanceBar.rating = task.importance.toFloat()
             val calendar = Calendar.getInstance()
@@ -188,24 +192,25 @@ class TaskAdapter(
 }
 
 class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val title = itemView.title_card
-    val importanceBar = itemView.importance_card
-    val deadline = itemView.deadline_card
-    val startMessage = itemView.message_card
+    val title: TextView = itemView.title_card
+    val color: MaterialCardView = itemView.color_card
+    val importanceBar: RatingBar = itemView.importance_card
+    val deadline: TextView = itemView.deadline_card
+    val startMessage: TextView = itemView.message_card
 
-    val project = itemView.project_text_card
-    val importanceScore = itemView.importance_number_card
-    val urgencyScore = itemView.urgency_number_card
-    val deadlineDetail = itemView.deadline_number_card
-    val estimatedTime = itemView.estimated_time_number_card
-    val minimumStartTime = itemView.minimum_start_time_number_card
-    val memo = itemView.memo_text_card
+    val project: TextView = itemView.project_text_card
+    val importanceScore: TextView = itemView.importance_number_card
+    val urgencyScore: TextView = itemView.urgency_number_card
+    val deadlineDetail: TextView = itemView.deadline_number_card
+    val estimatedTime: TextView = itemView.estimated_time_number_card
+    val minimumStartTime: TextView = itemView.minimum_start_time_number_card
+    val memo: TextView = itemView.memo_text_card
 
-    val expandButton = itemView.expand_icon_card
-    val detailLayout = itemView.card_detail_layout
-    val completeChip = itemView.action_complete_card
-    val editChip = itemView.action_edit_card
-    val deleteChip = itemView.action_delete_card
+    val expandButton: ImageView = itemView.expand_icon_card
+    val detailLayout: View = itemView.card_detail_layout
+    val completeChip: Chip = itemView.action_complete_card
+    val editChip: Chip = itemView.action_edit_card
+    val deleteChip: Chip = itemView.action_delete_card
 
     lateinit var updatedTask: Task
     var isExpand = false

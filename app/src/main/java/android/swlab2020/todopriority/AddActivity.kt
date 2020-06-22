@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.swlab2020.todopriority.data.SelectType
 import android.text.format.DateFormat
@@ -20,6 +21,7 @@ import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.app_bar_add.*
 import kotlinx.android.synthetic.main.content_add.*
+import kotlinx.android.synthetic.main.dialog_color_picker.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -35,7 +37,8 @@ class AddActivity : AppCompatActivity() {
                 "estimatedTime",
                 "memo",
                 "id",
-                "status"
+                "status",
+                "color"
             )
         enum class Mode(val code: Int) {
             PROJECT(2101), TASK(2102), PROJECT_UPDATE(2103), TASK_UPDATE(2104);
@@ -74,6 +77,7 @@ class AddActivity : AppCompatActivity() {
     private val updateID: Int by lazy {
         intent.getIntExtra(extraList[6], -1)
     }
+    private var color = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,6 +174,7 @@ class AddActivity : AppCompatActivity() {
             intent.putExtra(extraList[5], memo_text_add.editText?.text.toString())
             intent.putExtra(extraList[6], updateID)
             intent.putExtra(extraList[7], this.intent.getStringExtra(extraList[7]))
+            intent.putExtra(extraList[8], color)
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
@@ -450,19 +455,61 @@ class AddActivity : AppCompatActivity() {
         return !hasError
     }
 
+    private fun setProjectMode() {
+        project_select_add.visibility = View.GONE
+        deadline_time_add.visibility = View.GONE
+        estimated_time_add.visibility = View.GONE
+        title_text_add.apply {
+            setEndIconDrawable(R.drawable.ic_add_color)
+            endIconMode = TextInputLayout.END_ICON_CUSTOM
+            setEndIconOnClickListener {
+                color_picker_add.visibility = when (color_picker_add.visibility) {
+                    View.GONE -> {
+                        View.VISIBLE
+                    }
+                    else -> {
+                        View.GONE
+                    }
+                }
+            }
+            //color_picker_add.visibility = View.VISIBLE
+            val colors = listOf(
+                dialog_color_color1,
+                dialog_color_color2,
+                dialog_color_color3,
+                dialog_color_color4,
+                dialog_color_color5,
+                dialog_color_color6,
+                dialog_color_color7,
+                dialog_color_color8,
+                dialog_color_color9,
+                dialog_color_color10,
+                dialog_color_color11,
+                dialog_color_color12,
+                dialog_color_color13,
+                dialog_color_color14,
+                dialog_color_color15,
+                dialog_color_color16
+            )
+            colors.filterNotNull().forEach { cardView ->
+                cardView.setOnClickListener {
+                    color = cardView.cardBackgroundColor.defaultColor
+                    color_picker_add.visibility = View.GONE
+                    supportActionBar?.setBackgroundDrawable(ColorDrawable(color))
+                }
+            }
+        }
+    }
+
     private fun setMode() {
         when (mode) {
             Mode.PROJECT -> {
                 title = getString(R.string.add_title_project)
-                project_select_add.visibility = View.GONE
-                deadline_time_add.visibility = View.GONE
-                estimated_time_add.visibility = View.GONE
+                setProjectMode()
             }
             Mode.PROJECT_UPDATE -> {
                 title = getString(R.string.add_title_project_update)
-                project_select_add.visibility = View.GONE
-                deadline_time_add.visibility = View.GONE
-                estimated_time_add.visibility = View.GONE
+                setProjectMode()
                 done_button_add.text = getString(R.string.add_update)
             }
             Mode.TASK -> {
@@ -532,5 +579,7 @@ class AddActivity : AppCompatActivity() {
             estimated_time_add.editText?.setText("%02d:%02d".format(estimatedHour, estimatedMinute))
         }
         memo_text_add.editText?.setText(intent.getStringExtra(extraList[5]))
+        color = intent.getIntExtra(extraList[8], 0)
+        if (color != 0) supportActionBar?.setBackgroundDrawable(ColorDrawable(color))
     }
 }

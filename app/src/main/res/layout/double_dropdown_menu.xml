@@ -20,6 +20,7 @@
             android:layout_height="wrap_content"
             android:editable="false"
             android:inputType="none"
+            android:maxLines="1"
             tools:ignore="Deprecated,LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 

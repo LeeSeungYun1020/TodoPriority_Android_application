@@ -121,14 +121,15 @@ class MainActivity : AppCompatActivity() {
             onInsertProjectError(update)
         } else {
             val memo = data.getStringExtra(AddActivity.extraList[5])
-            val project = Project(name, importance, deadline, memo)
+            val color = data.getIntExtra(AddActivity.extraList[8], 0)
+            val project = Project(color, name, importance, deadline, memo)
             if (update) {
                 project.id = data.getIntExtra(AddActivity.extraList[6], -1)
                 projectViewModel.update(project)
             } else {
                 projectViewModel.insert(project)
             }
-            Log.d("LOG", "INSERT")
+            Log.d("LOG", "INSERT $color")
         }
     }
 

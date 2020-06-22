@@ -91,5 +91,11 @@
     <string name="dialog_delete">Delete</string>
     <string name="dialog_delete_msg">After deletion, it cannot be recovered.</string>
     <string name="dialog_cancel">Cancel</string>
+    <string name="analyze_project_in_progress">Currently in progress projects</string>
+    <string name="analyze_project_last">Previous projects</string>
+    <string name="select_all_projects">All projects</string>
+    <string name="analyze_previous_project">(previous)</string>
+    <string name="dialog_color_title">Pick color</string>
+    <string name="dialog_select">Select</string>
 
 </resources>

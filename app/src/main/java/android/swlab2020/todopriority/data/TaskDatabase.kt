@@ -60,6 +60,7 @@ class TaskRead {
 }
 
 data class TaskSummary(
+    @ColumnInfo(name = "color") var projectColor: Int,
     @ColumnInfo(name = "project_id") var projectId: Int,
     var name: String,
     var importance: Int,
@@ -67,36 +68,39 @@ data class TaskSummary(
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0
+    var status: Status = Status.IN_PROGRESS
 }
 
 @Dao
 interface TaskDao {
     // 기한내 진행 중인 할 일 우선순위 순으로 가져옴
     @Query(
-        "SELECT project_id, id, name, importance, deadline FROM tasks WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis " +
-                "ORDER BY CASE WHEN ((deadline - :nowInMillis) * 0.0000000463) >= 100 THEN (importance * 20) " +
-                "ELSE (importance * 20 + ROUND(100 - (deadline - :nowInMillis) * 0.0000000463)) END DESC, importance DESC"
+        "SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color " +
+                "FROM tasks LEFT JOIN projects ON project_id = projects.id " +
+                "WHERE tasks.status = 'IN_PROGRESS' AND tasks.deadline >= :nowInMillis " +
+                "ORDER BY CASE WHEN ((tasks.deadline - :nowInMillis) * 0.0000000463) >= 100 THEN (tasks.importance * 20) " +
+                "ELSE (tasks.importance * 20 + ROUND(100 - (tasks.deadline - :nowInMillis) * 0.0000000463)) END DESC, tasks.importance DESC"
     )
     fun load(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // 기한내 진행 중인 할 일 중요도 높은 순으로 가져옴
-    @Query("SELECT project_id, id, name, importance, deadline FROM tasks WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY importance DESC")
+    @Query("SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.status = 'IN_PROGRESS' AND tasks.deadline >= :nowInMillis ORDER BY tasks.importance DESC")
     fun loadByImportance(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // 기한내 진행 중인 할 일 기한 가까운 순으로 가져옴
-    @Query("SELECT project_id, id, name, importance, deadline FROM tasks WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY deadline")
+    @Query("SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.status = 'IN_PROGRESS' AND tasks.deadline >= :nowInMillis ORDER BY tasks.deadline")
     fun loadByDeadline(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // 기한 지난 모든 할 일 중요도 높은 순으로 가져옴
-    @Query("SELECT project_id, id, name, importance, deadline FROM tasks WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY importance DESC")
+    @Query("SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.status != 'IN_PROGRESS' OR tasks.deadline < :nowInMillis ORDER BY tasks.importance DESC")
     fun loadLastByImportance(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // 기한 지난 모든 할 일 기한 가까운 순으로 가져옴
-    @Query("SELECT project_id, id, name, importance, deadline FROM tasks WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY deadline")
+    @Query("SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.status != 'IN_PROGRESS' OR tasks.deadline < :nowInMillis ORDER BY tasks.deadline")
     fun loadLastByDeadline(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // 기한 지난 모든 할 일 완료 날짜 순으로 가져옴
-    @Query("SELECT project_id, id, name, importance, deadline FROM tasks WHERE status != 'IN_PROGRESS' OR deadline < :nowInMillis ORDER BY complete_date DESC")
+    @Query("SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.status != 'IN_PROGRESS' OR tasks.deadline < :nowInMillis ORDER BY tasks.complete_date DESC")
     fun loadLastByCompleteDate(nowInMillis: Long): LiveData<List<TaskSummary>>
 
     // id로 프로젝트 세부 정보 조회

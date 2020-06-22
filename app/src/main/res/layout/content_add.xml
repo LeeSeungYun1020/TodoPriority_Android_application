@@ -1,188 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-    android:layout_marginVertical="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".AddActivity"
-    tools:showIn="@layout/app_bar_add">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/project_select_add"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/add_select_project"
-        app:helperText="@string/add_required"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginVertical="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context=".AddActivity"
+        tools:showIn="@layout/app_bar_add">
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/project_select_add"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:inputType="none"
-            tools:ignore="Deprecated,LabelFor" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:hint="@string/add_select_project"
+            app:helperText="@string/add_required"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/project_count_add"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:inputType="none"
+                tools:ignore="Deprecated,LabelFor" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/title_text_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_title"
-        app:counterEnabled="true"
-        app:counterMaxLength="64"
-        app:endIconMode="clear_text"
-        app:helperText="@string/add_required"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/project_select_add">
+        <TextView
+            android:id="@+id/project_count_add"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/importance_star_number_add"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:hint="@string/add_importance"
-        app:helperText="@string/add_required"
-        app:layout_constraintEnd_toStartOf="@id/importance_star_bar_add"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_text_add">
-
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/title_text_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:editable="false"
-            android:inputType="none"
-            tools:ignore="Deprecated,LabelFor" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:hint="@string/add_title"
+            app:counterEnabled="true"
+            app:counterMaxLength="64"
+            app:endIconMode="clear_text"
+            app:helperText="@string/add_required"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/project_select_add">
 
-    <androidx.appcompat.widget.AppCompatRatingBar
-        android:id="@+id/importance_star_bar_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="1"
-        app:layout_constraintBottom_toBottomOf="@id/importance_star_number_add"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/importance_star_number_add"
-        app:layout_constraintTop_toBottomOf="@id/title_text_add" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/deadline_date_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_deadline_date"
-        app:endIconContentDescription="@string/add_description_deadline_date"
-        app:endIconDrawable="@drawable/ic_add_calendar"
-        app:endIconMode="custom"
-        app:helperText="@string/add_required"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/importance_star_number_add">
+        <include
+            android:id="@+id/color_picker_add"
+            layout="@layout/dialog_color_picker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/importance_star_number_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_text_add" />
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/importance_star_number_add"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:hint="@string/add_importance"
+            app:helperText="@string/add_required"
+            app:layout_constraintEnd_toStartOf="@id/importance_star_bar_add"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/color_picker_add">
+
+            <AutoCompleteTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:inputType="none"
+                tools:ignore="Deprecated,LabelFor" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatRatingBar
+            android:id="@+id/importance_star_bar_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:stepSize="1"
+            app:layout_constraintBottom_toBottomOf="@id/importance_star_number_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/importance_star_number_add"
+            app:layout_constraintTop_toTopOf="@id/importance_star_number_add" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/deadline_date_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date" />
+            android:hint="@string/add_deadline_date"
+            app:endIconContentDescription="@string/add_description_deadline_date"
+            app:endIconDrawable="@drawable/ic_add_calendar"
+            app:endIconMode="custom"
+            app:helperText="@string/add_required"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/importance_star_number_add">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/deadline_time_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_deadline_time"
-        app:endIconContentDescription="@string/add_description_deadline_time"
-        app:endIconDrawable="@drawable/ic_add_time"
-        app:endIconMode="custom"
-        app:helperText="@string/add_description_deadline_time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deadline_date_add">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/deadline_time_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="time" />
+            android:hint="@string/add_deadline_time"
+            app:endIconContentDescription="@string/add_description_deadline_time"
+            app:endIconDrawable="@drawable/ic_add_time"
+            app:endIconMode="custom"
+            app:helperText="@string/add_description_deadline_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/deadline_date_add">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="time" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/estimated_time_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_estimated_time"
-        app:endIconContentDescription="@string/add_description_estimated_time"
-        app:endIconDrawable="@drawable/ic_add_time"
-        app:endIconMode="custom"
-        app:errorEnabled="true"
-        app:helperText="@string/add_description_estimated_time"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/deadline_time_add">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/estimated_time_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="time" />
+            android:hint="@string/add_estimated_time"
+            app:endIconContentDescription="@string/add_description_estimated_time"
+            app:endIconDrawable="@drawable/ic_add_time"
+            app:endIconMode="custom"
+            app:errorEnabled="true"
+            app:helperText="@string/add_description_estimated_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/deadline_time_add">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="time" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/memo_text_add"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/add_memo"
-        app:counterEnabled="true"
-        app:counterMaxLength="512"
-        app:endIconMode="clear_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/estimated_time_add">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/memo_text_add"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:hint="@string/add_memo"
+            app:counterEnabled="true"
+            app:counterMaxLength="512"
+            app:endIconMode="clear_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/estimated_time_add">
 
-    <Button
-        android:id="@+id/cancel_button_add"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:text="@string/add_cancel"
-        app:icon="@drawable/ic_add_cancel"
-        app:layout_constraintEnd_toStartOf="@id/done_button_add"
-        app:layout_constraintTop_toBottomOf="@id/memo_text_add" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/done_button_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_done"
-        app:icon="@drawable/ic_add_done"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/memo_text_add" />
+        <Button
+            android:id="@+id/cancel_button_add"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:text="@string/add_cancel"
+            app:icon="@drawable/ic_add_cancel"
+            app:layout_constraintEnd_toStartOf="@id/done_button_add"
+            app:layout_constraintTop_toBottomOf="@id/memo_text_add" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/done_button_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_done"
+            app:icon="@drawable/ic_add_done"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/memo_text_add" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
