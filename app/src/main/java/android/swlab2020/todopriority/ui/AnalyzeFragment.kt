@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.swlab2020.todopriority.AddActivity
 import android.swlab2020.todopriority.R
 import android.swlab2020.todopriority.data.*
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -112,7 +111,6 @@ class AnalyzeFragment : Fragment() {
         }
         analyzeViewModel.requestSort.observe(viewLifecycleOwner, Observer { sort ->
             sortType = sort
-            Log.d("LOG", "change sort : $sortType")
             when (sortType) {
                 SortType.PRIORITY -> {
                     taskViewModel.sortedTasks.value?.let {

@@ -2,9 +2,9 @@ package android.swlab2020.todopriority
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.swlab2020.todopriority.data.*
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -15,6 +15,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -32,9 +33,8 @@ class MainActivity : AppCompatActivity() {
     private var restartAddTaskFlag = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q)
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
         super.onCreate(savedInstanceState)
+        setNightMode()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 startAddActivityForTask(intent)
             }
-            Log.d("LOG", "list updated")
         })
         taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
 
@@ -113,6 +112,25 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
+    private fun setNightMode() {
+        if (PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("nightModeManual", false)
+        ) {
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean("nightMode", false)
+            ) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        } else {
+            if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q)
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+            else
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
     private fun insertProject(data: Intent, update: Boolean = false) {
         val name = data.getStringExtra(AddActivity.extraList[1])
         val importance = data.getIntExtra(AddActivity.extraList[2], -1)
@@ -121,7 +139,13 @@ class MainActivity : AppCompatActivity() {
             onInsertProjectError(update)
         } else {
             val memo = data.getStringExtra(AddActivity.extraList[5])
-            val color = data.getIntExtra(AddActivity.extraList[8], 0)
+            var color = data.getIntExtra(AddActivity.extraList[8], 0)
+            if (color == 0) color = Color.argb(
+                (0..255).random(),
+                (0..255).random(),
+                (0..255).random(),
+                (0..255).random()
+            )
             val project = Project(color, name, importance, deadline, memo)
             if (update) {
                 project.id = data.getIntExtra(AddActivity.extraList[6], -1)
@@ -129,7 +153,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 projectViewModel.insert(project)
             }
-            Log.d("LOG", "INSERT $color")
         }
     }
 
@@ -146,7 +169,6 @@ class MainActivity : AppCompatActivity() {
             if (estimatedTime <= 0)
                 estimatedTime = 24 * 60
             val task = Task(projectId, name, importance, deadline, estimatedTime, memo)
-            Log.d("LOG", "update = $update")
             if (update) {
                 task.id = data.getIntExtra(AddActivity.extraList[6], -1)
                 task.status = Status.IN_PROGRESS

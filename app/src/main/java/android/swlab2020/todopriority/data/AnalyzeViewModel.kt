@@ -456,7 +456,6 @@ class AnalyzeAdapter(
 
     fun revalidateLastTasks(tasksLast: List<TaskSummary>) {
         lastTasks = tasksLast.map { TaskItem(it) }
-        Log.d("LOG", "Last task re ${tasksLast.isEmpty()}")
         revalidate()
     }
 
@@ -475,7 +474,6 @@ class AnalyzeAdapter(
             try {
                 items.add(IndicatorItem(selectedProject))
             } catch (e: UninitializedPropertyAccessException) {
-                Log.d("LOG", "데이터베이스 접근 시간 소요")
             } finally {
                 filteredTasks = filteredTasks.filter { it.task.projectId == projectId }
                 filteredLastTasks = filteredLastTasks.filter { it.task.projectId == projectId }

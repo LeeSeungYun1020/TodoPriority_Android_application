@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.swlab2020.todopriority.data.SelectType
 import android.text.format.DateFormat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -159,7 +158,6 @@ class AddActivity : AppCompatActivity() {
 
     private fun onDone() {
         if (validateEssentialData()) {
-            Log.d("LOG", "ADD VALIDATE PASS")
             val intent = Intent()
             intent.putExtra(Mode.code, mode.code)
             intent.putExtra(extraList[0], project_count_add.text.toString().toInt())

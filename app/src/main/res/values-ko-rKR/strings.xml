@@ -91,4 +91,22 @@
     <string name="analyze_previous_project">(이전)</string>
     <string name="dialog_color_title">색상 선택</string>
     <string name="dialog_select">선택</string>
+    <string name="setting_github">깃허브</string>
+    <string name="setting_github_description">깃허브 웹사이트로 이동합니다.</string>
+    <string name="setting_night_mode_manual">야간 모드 직접 조정</string>
+    <string name="setting_night_mode_on">야간 모드 켜짐.</string>
+    <string name="setting_night_mode_off">야간 모드 꺼짐.</string>
+    <string name="setting_night_mode_description">선택한 야간 모드 설정을 사용합니다.</string>
+    <string name="setting_night_mode_night">야간</string>
+    <string name="setting_night_mode_day">주간</string>
+    <string name="setting_info">정보</string>
+    <string name="setting_night_mode">야간 모드</string>
+    <string name="setting_plato">PLATO (강의실)</string>
+    <string name="setting_plato_description">플라토 웹사이트로 이동합니다.</string>
+    <string name="setting_bug_report">오류 보고</string>
+    <string name="setting_bug_report_send">전송</string>
+    <string name="setting_bug_report_description">개발자에게 발견된 오류를 보고합니다.</string>
+    <string name="nav_header_title">우선 순위 기반 시간 관리 어플리케이션</string>
+    <string name="nav_header_subtitle">팀13</string>
+    <string name="setting_bug_report_fail">오류 보고 실패.</string>
 </resources>

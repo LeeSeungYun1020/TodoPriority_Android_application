@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#ff7043</color>
     <color name="colorPrimaryDark">#c63f17</color>
-    <color name="colorAccent">#ffeb3b</color>
+    <color name="colorAccent">#62757f</color>
     <color name="colorSecondary">#fff176</color>
 
     <!--    Material 500 series-->

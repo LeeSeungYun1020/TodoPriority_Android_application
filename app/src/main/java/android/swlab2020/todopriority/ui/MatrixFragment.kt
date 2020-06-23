@@ -256,13 +256,10 @@ class MatrixFragment : Fragment() {
                     layoutInflater.inflate(R.layout.matrix_circle, constraint, false).apply {
                         id = View.generateViewId()
                         setBackgroundColor(p.color)
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                             tooltipText = p.name
-                        } else {
-                            setOnLongClickListener {
-                                Toast.makeText(requireContext(), p.name, Toast.LENGTH_SHORT).show()
-                                true
-                            }
+                        setOnClickListener {
+                            Toast.makeText(requireContext(), p.name, Toast.LENGTH_SHORT).show()
                         }
                     }
                 val params = ConstraintLayout.LayoutParams(
@@ -272,6 +269,7 @@ class MatrixFragment : Fragment() {
                     setMargins(0, 0, p.x + marginRight, p.y + marginBottom)
                     endToEnd = R.id.matrix_constraint
                     bottomToBottom = R.id.matrix_constraint
+
                 }
                 constraint.addView(circle, params)
                 views.add(circle)

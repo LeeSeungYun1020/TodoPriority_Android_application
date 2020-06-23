@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TodoPriority</string>
-    <string name="nav_header_title" translatable="false">Android Studio</string>
-    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_title">To do priority</string>
+    <string name="nav_header_subtitle">Team 13</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -97,5 +97,21 @@
     <string name="analyze_previous_project">(previous)</string>
     <string name="dialog_color_title">Pick color</string>
     <string name="dialog_select">Select</string>
+    <string name="setting_github">Github</string>
+    <string name="setting_github_description">Go to Github website.</string>
+    <string name="setting_night_mode_manual">Control night mode manually</string>
+    <string name="setting_night_mode_on">Night mode is turned on.</string>
+    <string name="setting_night_mode_off">Night mode is turned off.</string>
+    <string name="setting_night_mode_description">Use own night mode setting.</string>
+    <string name="setting_night_mode_night">Night</string>
+    <string name="setting_night_mode_day">Day</string>
+    <string name="setting_night_mode">Night mode</string>
+    <string name="setting_info">Information</string>
+    <string name="setting_plato">PLATO (classroom)</string>
+    <string name="setting_plato_description">Go to PLATO website.</string>
+    <string name="setting_bug_report">Bug report</string>
+    <string name="setting_bug_report_send">Send</string>
+    <string name="setting_bug_report_description">Send bug report to developer.</string>
+    <string name="setting_bug_report_fail">Failed to send bug report.</string>
 
 </resources>
