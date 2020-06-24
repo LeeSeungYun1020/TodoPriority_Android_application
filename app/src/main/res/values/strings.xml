@@ -113,5 +113,32 @@
     <string name="setting_bug_report_send">Send</string>
     <string name="setting_bug_report_description">Send bug report to developer.</string>
     <string name="setting_bug_report_fail">Failed to send bug report.</string>
+    <string name="setting_sync">Synchronization</string>
+    <string name="setting_sync_description">Synchronize data to the server.</string>
+    <string name="sync_id">ID</string>
+    <string name="sync_pw">Password</string>
+    <string name="sync_register">Register</string>
+    <string name="sync_login">Log in</string>
+    <string name="sync_welcome">Welcome to synchronization center.</string>
+    <string name="sync_upload">Upload data</string>
+    <string name="sync_download">Download Data</string>
+    <string name="sync_error_length16">Can\'t be longer than 16 characters.</string>
+    <string name="sync_disconnection">Server disconnected</string>
+    <string name="sync_disconnection_description">Server is now off. You can\'t visit synchronization center.</string>
+    <string name="dialog_ok">OK</string>
+    <string name="sync_error_login">Login error</string>
+    <string name="sync_error_id">No such id. Please register.</string>
+    <string name="sync_error_pw">The id or password don\'t match.</string>
+    <string name="sync_error_server_internal">An internal server error has occurred. so the request cannot be processed.</string>
+    <string name="sync_register_complete">Register processing completed well.</string>
+    <string name="sync_welcome_message">" hello!"</string>
+    <string name="sync_error_length5">Can\'t be shorter than 5 characters.</string>
+    <string name="sync_error_id_duplicate">Already used ID. Use another id.</string>
+    <string name="sync_error_register">Register error</string>
+    <string name="sync_error_upload">Upload error</string>
+    <string name="sync_error_download">Download error</string>
+    <string name="sync_error_load">An error occurred during database update. Try again.</string>
+    <string name="sync_uploading">Data upload start.</string>
+    <string name="sync_download_complete">Data Download Complete.</string>
 
 </resources>

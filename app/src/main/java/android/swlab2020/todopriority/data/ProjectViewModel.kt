@@ -27,6 +27,7 @@ import kotlin.math.roundToInt
 class ProjectViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: ProjectRepository
 
+    var allProjects: LiveData<List<Project>>
     var sortedProjects: LiveData<List<ProjectSummary>>
     var sortedProjectsImportance: LiveData<List<ProjectSummary>>
     var sortedProjectsDeadline: LiveData<List<ProjectSummary>>
@@ -44,6 +45,7 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
     init {
         val projectDao = AppDatabase.getDatabase(application).projectDao()
         repository = ProjectRepository(projectDao)
+        allProjects = repository.all
         sortedProjects = repository.priority
         sortedProjectsImportance = repository.importance
         sortedProjectsDeadline = repository.deadline
@@ -51,6 +53,10 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
         sortedLastProjectsImportance = repository.importanceLast
         sortedLastProjectsDeadline = repository.deadlineLast
         simpleProjects = repository.simple
+    }
+
+    fun init() = viewModelScope.launch(Dispatchers.IO) {
+        repository.init()
     }
 
     fun loadDetail(id: Int) = viewModelScope.launch(Dispatchers.IO) {

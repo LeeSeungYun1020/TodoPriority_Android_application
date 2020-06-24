@@ -40,6 +40,12 @@ data class ProjectSimple(val id: Int, val name: String)
 
 @Dao
 interface ProjectDao {
+    @Query("SELECT * FROM projects")
+    fun loadAll(): LiveData<List<Project>>
+
+    @Query("DELETE from projects")
+    suspend fun init()
+
     // 프로젝트 id, 이름만 가져옴
     @Query("SELECT id, name FROM projects WHERE status = 'IN_PROGRESS' AND deadline >= :nowInMillis ORDER BY importance DESC")
     fun loadSimple(nowInMillis: Long): LiveData<List<ProjectSimple>>
@@ -83,19 +89,18 @@ interface ProjectDao {
     @Query("UPDATE tasks SET status = 'FAIL' WHERE project_id = :id and deadline < :nowInMillis")
     suspend fun validTaskStatus(id: Int, nowInMillis: Long)
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(project: Project)
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(project: Project)
 
     @Delete
     suspend fun delete(project: Project)
 }
 
-// TODO("네트워크(서버)로직 추가 필요")
 class ProjectRepository(private val projectDao: ProjectDao) {
-
+    val all = projectDao.loadAll()
     val simple = projectDao.loadSimple(System.currentTimeMillis())
     val priority = projectDao.load(System.currentTimeMillis())
     val importance = projectDao.loadByImportance(System.currentTimeMillis())
@@ -113,6 +118,7 @@ class ProjectRepository(private val projectDao: ProjectDao) {
     }
 
     suspend fun update(project: Project) {
+        project.sync = false
         projectDao.update(project)
         if (project.status != Status.IN_PROGRESS)
             projectDao.syncTaskStatus(project.id, project.status)
@@ -121,5 +127,9 @@ class ProjectRepository(private val projectDao: ProjectDao) {
 
     suspend fun delete(project: Project) {
         projectDao.delete(project)
+    }
+
+    suspend fun init() {
+        projectDao.init()
     }
 }

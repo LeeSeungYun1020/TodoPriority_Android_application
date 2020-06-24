@@ -400,7 +400,7 @@ class AddActivity : AppCompatActivity() {
         cancel_button_add.setOnClickListener {
             onCanceled()
         }
-        done_button_add.setOnClickListener {
+        add_button_add.setOnClickListener {
             onDone()
         }
     }
@@ -508,14 +508,14 @@ class AddActivity : AppCompatActivity() {
             Mode.PROJECT_UPDATE -> {
                 title = getString(R.string.add_title_project_update)
                 setProjectMode()
-                done_button_add.text = getString(R.string.add_update)
+                add_button_add.text = getString(R.string.add_update)
             }
             Mode.TASK -> {
                 title = getString(R.string.add_title_task)
             }
             Mode.TASK_UPDATE -> {
                 title = getString(R.string.add_title_task_update)
-                done_button_add.text = getString(R.string.add_update)
+                add_button_add.text = getString(R.string.add_update)
             }
         }
     }

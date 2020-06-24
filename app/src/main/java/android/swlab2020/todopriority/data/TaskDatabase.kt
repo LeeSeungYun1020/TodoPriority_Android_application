@@ -73,6 +73,12 @@ data class TaskSummary(
 
 @Dao
 interface TaskDao {
+    @Query("SELECT * FROM tasks")
+    fun loadAll(): LiveData<List<Task>>
+
+    @Query("DELETE from tasks")
+    suspend fun init()
+
     // 기한내 진행 중인 할 일 우선순위 순으로 가져옴
     @Query(
         "SELECT project_id, tasks.id, tasks.name, tasks.importance, tasks.deadline, tasks.status, color " +
@@ -116,10 +122,10 @@ interface TaskDao {
     @Query("UPDATE projects SET `fail` = `fail` + :number WHERE id = :projectId")
     suspend fun syncProjectFailStatus(projectId: Int, number: Int)
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(task: Task)
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(task: Task)
 
     @Delete
@@ -127,6 +133,7 @@ interface TaskDao {
 }
 
 class TaskRepository(private val taskDao: TaskDao) {
+    val all = taskDao.loadAll()
     val priority = taskDao.load(System.currentTimeMillis())
     val importance = taskDao.loadByImportance(System.currentTimeMillis())
     val deadline = taskDao.loadByDeadline(System.currentTimeMillis())
@@ -147,7 +154,8 @@ class TaskRepository(private val taskDao: TaskDao) {
         }
     }
 
-    suspend fun update(task: Task, previousStatus: Status) {
+    suspend fun update(task: Task, previousStatus: Status?) {
+        task.sync = false
         taskDao.update(task)
         when (task.status) {
             Status.IN_PROGRESS -> taskDao.syncProjectInProgressStatus(task.projectId, 1)
@@ -168,5 +176,9 @@ class TaskRepository(private val taskDao: TaskDao) {
             Status.SUCCESS -> taskDao.syncProjectSuccessStatus(task.projectId, -1)
             Status.FAIL -> taskDao.syncProjectFailStatus(task.projectId, -1)
         }
+    }
+
+    suspend fun init() {
+        taskDao.init()
     }
 }

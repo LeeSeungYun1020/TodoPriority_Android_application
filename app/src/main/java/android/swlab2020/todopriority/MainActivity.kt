@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             val memo = data.getStringExtra(AddActivity.extraList[5])
             var color = data.getIntExtra(AddActivity.extraList[8], 0)
             if (color == 0) color = Color.argb(
-                (0..255).random(),
+                (128..255).random(),
                 (0..255).random(),
                 (0..255).random(),
                 (0..255).random()

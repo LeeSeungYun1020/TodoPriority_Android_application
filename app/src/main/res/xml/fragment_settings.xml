@@ -3,6 +3,20 @@
 
     <PreferenceCategory
         app:iconSpaceReserved="false"
+        app:title="@string/setting_sync">
+        <Preference
+            app:icon="@drawable/ic_setting_sync"
+            app:key="sync"
+            app:summary="@string/setting_sync_description"
+            app:title="@string/setting_sync">
+            <intent
+                android:targetClass="android.swlab2020.todopriority.SyncActivity"
+                android:targetPackage="android.swlab2020.todopriority" />
+        </Preference>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:iconSpaceReserved="false"
         app:title="@string/setting_night_mode">
         <CheckBoxPreference
             app:icon="@drawable/ic_setting_night_mode"
@@ -31,7 +45,7 @@
         </Preference>
         <Preference
             app:icon="@drawable/ic_setting_web"
-            app:key="github"
+            app:key="plato"
             app:summary="@string/setting_plato_description"
             app:title="@string/setting_plato">
             <intent

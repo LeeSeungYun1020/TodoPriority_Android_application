@@ -27,6 +27,7 @@ import kotlin.math.roundToInt
 class TaskViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: TaskRepository
 
+    var allTasks: LiveData<List<Task>>
     var sortedTasks: LiveData<List<TaskSummary>>
     var sortedTasksImportance: LiveData<List<TaskSummary>>
     var sortedTasksDeadline: LiveData<List<TaskSummary>>
@@ -39,6 +40,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val taskDao = AppDatabase.getDatabase(application).taskDao()
         repository = TaskRepository(taskDao)
+        allTasks = repository.all
         sortedTasks = repository.priority
         sortedTasksImportance = repository.importance
         sortedTasksDeadline = repository.deadline
@@ -55,7 +57,11 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(task)
     }
 
-    fun update(task: Task, status: Status) = viewModelScope.launch(Dispatchers.IO) {
+    fun init() = viewModelScope.launch(Dispatchers.IO) {
+        repository.init()
+    }
+
+    fun update(task: Task, status: Status?) = viewModelScope.launch(Dispatchers.IO) {
         repository.update(task, status)
     }
 

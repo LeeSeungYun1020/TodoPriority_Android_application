@@ -187,11 +187,11 @@
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:text="@string/add_cancel"
             app:icon="@drawable/ic_add_cancel"
-            app:layout_constraintEnd_toStartOf="@id/done_button_add"
+            app:layout_constraintEnd_toStartOf="@id/add_button_add"
             app:layout_constraintTop_toBottomOf="@id/memo_text_add" />
 
         <Button
-            android:id="@+id/done_button_add"
+            android:id="@+id/add_button_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_done"

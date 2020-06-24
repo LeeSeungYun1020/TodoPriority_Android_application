@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    tools:context=".SyncActivity"
+    tools:showIn="@layout/app_bar_sync">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sync_id_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/sync_id"
+        android:nextFocusDown="@id/sync_pw_input"
+        app:counterEnabled="true"
+        app:counterMaxLength="16"
+        app:endIconMode="clear_text"
+        app:helperText="@string/add_required"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/sync_pw_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/sync_pw"
+        android:nextFocusDown="@id/sync_login_button"
+        app:counterEnabled="true"
+        app:counterMaxLength="16"
+        app:endIconMode="clear_text"
+        app:helperText="@string/add_required"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_id_input">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/sync_register_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:text="@string/sync_register"
+        app:icon="@drawable/ic_sync_register"
+        app:layout_constraintEnd_toStartOf="@id/sync_login_button"
+        app:layout_constraintTop_toBottomOf="@id/sync_pw_input" />
+
+    <Button
+        android:id="@+id/sync_login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_login"
+        app:icon="@drawable/ic_sync_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_pw_input" />
+
+    <TextView
+        android:id="@+id/sync_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_welcome"
+        android:textAlignment="textStart"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_register_button" />
+
+    <ImageView
+        android:id="@+id/sync_status"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:contentDescription="@string/sync_welcome"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_sync_cloud"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_welcome" />
+
+    <Button
+        android:id="@+id/sync_download_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:text="@string/sync_download"
+        android:visibility="gone"
+        app:icon="@drawable/ic_sync_download"
+        app:layout_constraintEnd_toStartOf="@id/sync_upload_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sync_status" />
+
+    <Button
+        android:id="@+id/sync_upload_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sync_upload"
+        android:visibility="gone"
+        app:icon="@drawable/ic_sync_upload"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/sync_download_button"
+        app:layout_constraintTop_toBottomOf="@id/sync_status" />
+</androidx.constraintlayout.widget.ConstraintLayout>
