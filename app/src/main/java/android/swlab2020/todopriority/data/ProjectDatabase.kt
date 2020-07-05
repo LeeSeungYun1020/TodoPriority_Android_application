@@ -83,11 +83,17 @@ interface ProjectDao {
     @Query("SELECT * FROM projects WHERE id=:id")
     suspend fun loadDetailById(id: Int): Project
 
-    @Query("UPDATE tasks SET status = :status WHERE project_id = :id and status = 'IN_PROGRESS'")
+    @Query("SELECT * FROM projects WHERE sync=0")
+    fun loadSync(): LiveData<List<Project>>
+
+    @Query("UPDATE tasks SET status = :status, sync = 0 WHERE project_id = :id and status = 'IN_PROGRESS'")
     suspend fun syncTaskStatus(id: Int, status: Status)
 
-    @Query("UPDATE tasks SET status = 'FAIL' WHERE project_id = :id and deadline < :nowInMillis")
+    @Query("UPDATE tasks SET status = 'FAIL', sync = 0 WHERE project_id = :id and deadline < :nowInMillis")
     suspend fun validTaskStatus(id: Int, nowInMillis: Long)
+
+    @Query("UPDATE projects SET in_progress = :inProgress, success = :succeed, `fail` = :failed WHERE id = :projectId")
+    suspend fun syncStatus(projectId: Int, inProgress: Int, succeed: Int, failed: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(project: Project)
@@ -108,6 +114,7 @@ class ProjectRepository(private val projectDao: ProjectDao) {
     val priorityLast = projectDao.loadLastByCompleteDate(System.currentTimeMillis())
     val importanceLast = projectDao.loadLastByImportance(System.currentTimeMillis())
     val deadlineLast = projectDao.loadLastByDeadline(System.currentTimeMillis())
+    val sync = projectDao.loadSync()
 
     suspend fun loadDetail(id: Int): Project {
         return projectDao.loadDetailById(id)
@@ -131,5 +138,9 @@ class ProjectRepository(private val projectDao: ProjectDao) {
 
     suspend fun init() {
         projectDao.init()
+    }
+
+    suspend fun syncStatus(id: Int, inProgress: Int, success: Int, fail: Int) {
+        projectDao.syncStatus(id, inProgress, success, fail)
     }
 }

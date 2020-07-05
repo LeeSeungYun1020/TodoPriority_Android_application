@@ -113,14 +113,8 @@ interface TaskDao {
     @Query("SELECT tasks.*, projects.name as projectName FROM tasks LEFT JOIN projects ON project_id = projects.id WHERE tasks.id=:id")
     suspend fun loadDetailById(id: Int): TaskRead
 
-    @Query("UPDATE projects SET in_progress = in_progress + :number WHERE id = :projectId")
-    suspend fun syncProjectInProgressStatus(projectId: Int, number: Int)
-
-    @Query("UPDATE projects SET success = success + :number WHERE id = :projectId")
-    suspend fun syncProjectSuccessStatus(projectId: Int, number: Int)
-
-    @Query("UPDATE projects SET `fail` = `fail` + :number WHERE id = :projectId")
-    suspend fun syncProjectFailStatus(projectId: Int, number: Int)
+    @Query("SELECT * FROM tasks WHERE sync=0")
+    fun loadSync(): LiveData<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(task: Task)
@@ -140,6 +134,7 @@ class TaskRepository(private val taskDao: TaskDao) {
     val importanceLast = taskDao.loadLastByImportance(System.currentTimeMillis())
     val deadlineLast = taskDao.loadLastByDeadline(System.currentTimeMillis())
     val completeLast = taskDao.loadLastByCompleteDate(System.currentTimeMillis())
+    val sync = taskDao.loadSync()
 
     suspend fun loadDetail(id: Int): TaskRead {
         return taskDao.loadDetailById(id)
@@ -147,35 +142,15 @@ class TaskRepository(private val taskDao: TaskDao) {
 
     suspend fun insert(task: Task) {
         taskDao.insert(task)
-        when (task.status) {
-            Status.IN_PROGRESS -> taskDao.syncProjectInProgressStatus(task.projectId, 1)
-            Status.SUCCESS -> taskDao.syncProjectSuccessStatus(task.projectId, 1)
-            Status.FAIL -> taskDao.syncProjectFailStatus(task.projectId, 1)
-        }
     }
 
-    suspend fun update(task: Task, previousStatus: Status?) {
+    suspend fun update(task: Task) {
         task.sync = false
         taskDao.update(task)
-        when (task.status) {
-            Status.IN_PROGRESS -> taskDao.syncProjectInProgressStatus(task.projectId, 1)
-            Status.SUCCESS -> taskDao.syncProjectSuccessStatus(task.projectId, 1)
-            Status.FAIL -> taskDao.syncProjectFailStatus(task.projectId, 1)
-        }
-        when (previousStatus) {
-            Status.IN_PROGRESS -> taskDao.syncProjectInProgressStatus(task.projectId, -1)
-            Status.SUCCESS -> taskDao.syncProjectSuccessStatus(task.projectId, -1)
-            Status.FAIL -> taskDao.syncProjectFailStatus(task.projectId, -1)
-        }
     }
 
     suspend fun delete(task: Task) {
         taskDao.delete(task)
-        when (task.status) {
-            Status.IN_PROGRESS -> taskDao.syncProjectInProgressStatus(task.projectId, -1)
-            Status.SUCCESS -> taskDao.syncProjectSuccessStatus(task.projectId, -1)
-            Status.FAIL -> taskDao.syncProjectFailStatus(task.projectId, -1)
-        }
     }
 
     suspend fun init() {

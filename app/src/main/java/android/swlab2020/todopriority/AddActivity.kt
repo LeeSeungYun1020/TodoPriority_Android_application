@@ -15,6 +15,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputLayout
@@ -76,6 +77,8 @@ class AddActivity : AppCompatActivity() {
     private val updateID: Int by lazy {
         intent.getIntExtra(extraList[6], -1)
     }
+
+    @ColorInt
     private var color = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -200,7 +203,7 @@ class AddActivity : AppCompatActivity() {
         val size = intent.getIntExtra("size", 0)
 
         val pairList = mutableListOf<Pair<Int, String>>()
-        val stringList = mutableListOf<String>(getString(R.string.add_select_project_init))
+        val stringList = mutableListOf(getString(R.string.add_select_project_init))
         for (i in 0..size) {
             try {
                 val pair = intent.getSerializableExtra("project$i") as Pair<*, *>
@@ -494,6 +497,7 @@ class AddActivity : AppCompatActivity() {
                     color = cardView.cardBackgroundColor.defaultColor
                     color_picker_add.visibility = View.GONE
                     supportActionBar?.setBackgroundDrawable(ColorDrawable(color))
+                    window.statusBarColor = color
                 }
             }
         }
@@ -578,6 +582,9 @@ class AddActivity : AppCompatActivity() {
         }
         memo_text_add.editText?.setText(intent.getStringExtra(extraList[5]))
         color = intent.getIntExtra(extraList[8], 0)
-        if (color != 0) supportActionBar?.setBackgroundDrawable(ColorDrawable(color))
+        if (color != 0) {
+            supportActionBar?.setBackgroundDrawable(ColorDrawable(color))
+            window.statusBarColor = color
+        }
     }
 }

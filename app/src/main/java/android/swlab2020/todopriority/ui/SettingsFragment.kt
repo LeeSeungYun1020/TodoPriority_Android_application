@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.swlab2020.todopriority.R
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.edit
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 
@@ -11,7 +12,6 @@ import com.google.android.material.snackbar.Snackbar
 class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.fragment_settings, rootKey)
-
         findPreference<CheckBoxPreference>("nightModeManual")?.setOnPreferenceChangeListener { _, newValue ->
             if (newValue == true) {
                 if (PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -73,4 +73,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setAutoSync()
+    }
+
+    private fun setAutoSync() {
+        findPreference<SwitchPreference>("auto_sync")?.apply {
+            val isLogin = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                .getBoolean("isLogin", false)
+            if (!isLogin)
+                sharedPreferences.edit {
+                    putBoolean("auto_sync", false)
+                    commit()
+                }
+            isSelectable = isLogin
+            isEnabled = isLogin
+        }
+    }
 }

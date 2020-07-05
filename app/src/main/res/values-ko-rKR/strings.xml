@@ -59,7 +59,7 @@
     <string name="message_start_important_2">빠르게 완료하는 것을 추천합니다.</string>
     <string name="message_start_not_important_3">다른 것을 먼저 하십시오.</string>
     <string name="message_start_not_important_4">취소하거나 연기하십시오.</string>
-    <string name="message_start_not_important_2">부탁할 사람이 있다면 대신 맡기십시오.</string>
+    <string name="message_start_not_important_2">맡길 사람이 있다면 대신 부탁하십시오.</string>
     <string name="message_start_important_3">완료하려면 지금부터 시작하는 것이 좋습니다.</string>
     <string name="message_start_important_4">차근차근 해나갑시다.</string>
     <string name="message_start_not_important_1">어떻게든 빠르게 처리하십시오.</string>
@@ -109,8 +109,8 @@
     <string name="nav_header_title">우선 순위 기반 시간 관리 어플리케이션</string>
     <string name="nav_header_subtitle">팀13</string>
     <string name="setting_bug_report_fail">오류 보고 실패.</string>
-    <string name="setting_sync">동기화</string>
-    <string name="setting_sync_description">데이터를 서버에 동기화 합니다.</string>
+    <string name="setting_sync_center">동기화 센터</string>
+    <string name="setting_sync_center_description">동기화 센터에 방문합니다.</string>
     <string name="sync_id">아이디</string>
     <string name="sync_pw">비밀번호</string>
     <string name="sync_register">가입</string>
@@ -120,7 +120,7 @@
     <string name="sync_download">데이터 다운로드</string>
     <string name="sync_error_length16">16자 이하여야 합니다.</string>
     <string name="sync_disconnection">서버 연결 불가</string>
-    <string name="sync_disconnection_description">서버가 꺼져 있어 동기화 센터에 방문할 수 없습니다.</string>
+    <string name="sync_disconnection_description">서버와 연결할 수 없어 동기화 센터에 방문할 수 없습니다.</string>
     <string name="dialog_ok">확인</string>
     <string name="sync_error_login">로그인 오류</string>
     <string name="sync_error_id">아이디가 존재하지 않습니다. 가입하여 주십시오.</string>
@@ -136,4 +136,13 @@
     <string name="sync_error_load">데이터베이스 갱신 도중 오류가 발생했습니다. 다시 시도해보십시오.</string>
     <string name="sync_uploading">데이터 업로드 시작</string>
     <string name="sync_download_complete">데이터 다운로드 완료</string>
+    <string name="setting_auto_sync">자동 동기화</string>
+    <string name="setting_auto_sync_on">자동 동기화가 작동되고 있습니다.</string>
+    <string name="setting_auto_sync_off">자동 동기화가 작동되지 않고 있습니다.</string>
+    <string name="sync_upload_message">데이터를 업로드하시겠습니까? 서버에 저장된 데이터는 삭제될 수 있습니다.</string>
+    <string name="sync_download_message">데이터를 다운로드하시겠습니까? 이 장치에 저장된 데이터는 삭제될 수 있습니다.</string>
+    <string name="setting_sync">동기화</string>
+    <string name="sync_upload_complete_project">프로젝트 업로드 완료</string>
+    <string name="sync_upload_complete_task">할 일 업로드 완료</string>
+    <string name="sync_logout">로그아웃</string>
 </resources>

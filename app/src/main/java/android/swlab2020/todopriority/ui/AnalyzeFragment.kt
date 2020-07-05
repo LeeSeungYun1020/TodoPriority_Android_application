@@ -52,6 +52,7 @@ class AnalyzeFragment : Fragment() {
         setObserver()
     }
 
+
     private fun setObserver() {
         projectViewModel.simpleProjects.observe(viewLifecycleOwner, Observer { projects ->
             analyzeAdapter.revalidateSimpleProjectList(projects)
@@ -168,7 +169,8 @@ class AnalyzeFragment : Fragment() {
             }
         })
         projectViewModel.detailProject.observe(viewLifecycleOwner, Observer {
-            analyzeAdapter.revalidateProject(it)
+            if (analyzeAdapter.projectId != -1)
+                analyzeAdapter.revalidateProject(it)
         })
         projectViewModel.requestProjectUpdate.observe(viewLifecycleOwner, Observer { project ->
             Intent(requireContext(), AddActivity::class.java).run {
@@ -177,6 +179,8 @@ class AnalyzeFragment : Fragment() {
                 putExtra(AddActivity.extraList[3], project.deadline)
                 putExtra(AddActivity.extraList[5], project.memo)
                 putExtra(AddActivity.extraList[6], project.id)
+                putExtra(AddActivity.extraList[7], project.status)
+                putExtra(AddActivity.extraList[8], project.color)
                 fragmentViewModel.updateProject.postValue(this)
             }
         })
@@ -184,6 +188,19 @@ class AnalyzeFragment : Fragment() {
             Intent(requireContext(), AddActivity::class.java).run {
                 putExtra(AddActivity.extraList[0], project.id)
                 fragmentViewModel.addTask.postValue(this)
+            }
+        })
+        taskViewModel.requestTaskUpdate.observe(viewLifecycleOwner, Observer { task ->
+            Intent(requireContext(), AddActivity::class.java).run {
+                putExtra(AddActivity.extraList[0], task.projectId)
+                putExtra(AddActivity.extraList[1], task.name)
+                putExtra(AddActivity.extraList[2], task.importance)
+                putExtra(AddActivity.extraList[3], task.deadline)
+                putExtra(AddActivity.extraList[4], task.estimatedTime)
+                putExtra(AddActivity.extraList[5], task.memo)
+                putExtra(AddActivity.extraList[6], task.id)
+                putExtra(AddActivity.extraList[7], task.status)
+                fragmentViewModel.updateTask.postValue(this)
             }
         })
     }

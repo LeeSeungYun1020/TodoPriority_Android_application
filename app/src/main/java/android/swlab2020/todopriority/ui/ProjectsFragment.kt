@@ -84,6 +84,8 @@ class ProjectsFragment : Fragment() {
                 putExtra(extraList[3], project.deadline)
                 putExtra(extraList[5], project.memo)
                 putExtra(extraList[6], project.id)
+                putExtra(extraList[7], project.status)
+                putExtra(extraList[8], project.color)
                 fragmentViewModel.updateProject.postValue(this)
             }
         })
@@ -96,6 +98,7 @@ class ProjectsFragment : Fragment() {
         projectViewModel.requestNavigateToAnalyze.observe(viewLifecycleOwner, Observer {
             if (it != 0)
                 fragmentViewModel.navigateAnalyze.postValue(it)
+            projectViewModel.requestNavigateToAnalyze.postValue(0)
         })
     }
 

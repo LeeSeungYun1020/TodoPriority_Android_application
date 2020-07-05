@@ -211,6 +211,11 @@ class AnalyzeAdapter(
     private fun onBindTaskViewHolder(holder: TaskViewHolder, position: Int) {
         val task = (items[position] as TaskItem).task
         holder.apply {
+            if (isExpand) {
+                detailLayout.visibility = View.GONE
+                expandButton.setImageResource(R.drawable.ic_card_expand_more)
+                isExpand = false
+            }
             color.setCardBackgroundColor(task.projectColor)
             title.text = task.name
             importanceBar.rating = task.importance.toFloat()
@@ -288,9 +293,29 @@ class AnalyzeAdapter(
                                 } else {
                                     memo.visibility = View.GONE
                                 }
+                                updatedTask = detail.toTask()
                             }
-                            updatedTask = detail.toTask()
                         })
+                        hasObserver = true
+                    }
+                    if (task.status == Status.IN_PROGRESS) {
+                        if (!completeChip.hasOnClickListeners())
+                            completeChip.setOnClickListener {
+                                updatedTask.status = Status.SUCCESS
+                                updatedTask.completeDate = System.currentTimeMillis()
+                                taskViewModel.update(updatedTask)
+                            }
+                        if (!editChip.hasOnClickListeners())
+                            editChip.setOnClickListener {
+                                taskViewModel.requestTaskUpdate.postValue(updatedTask)
+                            }
+                        if (!deleteChip.hasOnClickListeners())
+                            deleteChip.setOnClickListener {
+                                updatedTask.status = Status.FAIL
+                                updatedTask.completeDate = System.currentTimeMillis()
+                                taskViewModel.update(updatedTask)
+                            }
+                    } else {
                         completeChip.visibility = View.GONE
                         editChip.visibility = View.GONE
                         deleteChip.chipIcon = context.getDrawable(R.drawable.ic_dialog_delete)
@@ -307,7 +332,6 @@ class AnalyzeAdapter(
                                     }
                                     .show()
                             }
-                        hasObserver = true
                     }
                 }
                 isExpand = !isExpand
@@ -317,8 +341,14 @@ class AnalyzeAdapter(
 
     @SuppressLint("SetTextI18n")
     fun onBindProjectViewHolder(holder: ProjectViewHolder, position: Int) {
+        Log.d("LOG", "project $position")
         val project = (items[position] as ProjectItem).project
         holder.apply {
+            if (isExpand) {
+                detailLayout.visibility = View.GONE
+                expandButton.setImageResource(R.drawable.ic_card_expand_more)
+                isExpand = false
+            }
             color.setCardBackgroundColor(project.color)
             title.text = project.name
             importanceBar.rating = project.importance.toFloat()
@@ -377,57 +407,56 @@ class AnalyzeAdapter(
                                 } else {
                                     memo.visibility = View.GONE
                                 }
+                                updatedProject = detail
                             }
-                            updatedProject = detail
                         })
-
-                        if (project.status == Status.IN_PROGRESS) {
-                            if (!completeChip.hasOnClickListeners())
-                                completeChip.setOnClickListener {
-                                    updatedProject.status = Status.SUCCESS
-                                    projectViewModel.update(updatedProject)
-                                }
-                            if (!editChip.hasOnClickListeners())
-                                editChip.setOnClickListener {
-                                    projectViewModel.requestProjectUpdate.postValue(updatedProject)
-                                }
-                            if (!deleteChip.hasOnClickListeners())
-                                deleteChip.setOnClickListener {
-                                    updatedProject.status = Status.FAIL
-                                    projectViewModel.update(updatedProject)
-                                }
-                            if (!taskChip.hasOnClickListeners())
-                                taskChip.setOnClickListener {
-                                    projectViewModel.requestTaskAdd.postValue(updatedProject)
-                                }
-                        } else {
-                            completeChip.visibility = View.GONE
-                            editChip.visibility = View.GONE
-                            deleteChip.chipIcon = context.getDrawable(R.drawable.ic_dialog_delete)
-                            deleteChip.text = context.getString(R.string.card_delete)
-                            if (!deleteChip.hasOnClickListeners())
-                                deleteChip.setOnClickListener {
-                                    MaterialAlertDialogBuilder(context)
-                                        .setIcon(R.drawable.ic_dialog_delete)
-                                        .setTitle(R.string.dialog_delete)
-                                        .setMessage(R.string.dialog_delete_msg)
-                                        .setNegativeButton(R.string.dialog_cancel, null)
-                                        .setPositiveButton(R.string.dialog_delete) { _, _ ->
-                                            projectViewModel.delete(updatedProject)
-                                        }
-                                        .show()
-                                }
-                            taskChip.visibility = View.GONE
-                        }
-                        if (!analyzeChip.hasOnClickListeners())
-                            analyzeChip.setOnClickListener {
-                                projectId = updatedProject.id
-                                analyzeViewModel.requestProject.postValue(projectId)
-                                revalidate()
-                            }
-
                         hasObserver = true
                     }
+                    if (project.status == Status.IN_PROGRESS) {
+                        if (!completeChip.hasOnClickListeners())
+                            completeChip.setOnClickListener {
+                                updatedProject.status = Status.SUCCESS
+                                projectViewModel.update(updatedProject)
+
+                            }
+                        if (!editChip.hasOnClickListeners())
+                            editChip.setOnClickListener {
+                                projectViewModel.requestProjectUpdate.postValue(updatedProject)
+                            }
+                        if (!deleteChip.hasOnClickListeners())
+                            deleteChip.setOnClickListener {
+                                updatedProject.status = Status.FAIL
+                                projectViewModel.update(updatedProject)
+                            }
+                        if (!taskChip.hasOnClickListeners())
+                            taskChip.setOnClickListener {
+                                projectViewModel.requestTaskAdd.postValue(updatedProject)
+                            }
+                    } else {
+                        completeChip.visibility = View.GONE
+                        editChip.visibility = View.GONE
+                        deleteChip.chipIcon = context.getDrawable(R.drawable.ic_dialog_delete)
+                        deleteChip.text = context.getString(R.string.card_delete)
+                        if (!deleteChip.hasOnClickListeners())
+                            deleteChip.setOnClickListener {
+                                MaterialAlertDialogBuilder(context)
+                                    .setIcon(R.drawable.ic_dialog_delete)
+                                    .setTitle(R.string.dialog_delete)
+                                    .setMessage(R.string.dialog_delete_msg)
+                                    .setNegativeButton(R.string.dialog_cancel, null)
+                                    .setPositiveButton(R.string.dialog_delete) { _, _ ->
+                                        projectViewModel.delete(updatedProject)
+                                    }
+                                    .show()
+                            }
+                        taskChip.visibility = View.GONE
+                    }
+                    if (!analyzeChip.hasOnClickListeners())
+                        analyzeChip.setOnClickListener {
+                            projectId = updatedProject.id
+                            analyzeViewModel.requestProject.postValue(projectId)
+                            revalidate()
+                        }
                 }
                 isExpand = !isExpand
             }
@@ -474,10 +503,9 @@ class AnalyzeAdapter(
             try {
                 items.add(IndicatorItem(selectedProject))
             } catch (e: UninitializedPropertyAccessException) {
-            } finally {
-                filteredTasks = filteredTasks.filter { it.task.projectId == projectId }
-                filteredLastTasks = filteredLastTasks.filter { it.task.projectId == projectId }
             }
+            filteredTasks = filteredTasks.filter { it.task.projectId == projectId }
+            filteredLastTasks = filteredLastTasks.filter { it.task.projectId == projectId }
             if (filteredTasks.isNotEmpty()) {
                 items.add(HeaderItem(context.getString(R.string.analyze_task_in_progress)))
                 items.addAll(filteredTasks)

@@ -35,6 +35,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
     var sortedLastTasksDeadline: LiveData<List<TaskSummary>>
     var sortedLastTasksComplete: LiveData<List<TaskSummary>>
     var detailTask = MutableLiveData<TaskRead>()
+    var syncNeedTasks: LiveData<List<Task>>
+
     var requestTaskUpdate = MutableLiveData<Task>()
 
     init {
@@ -47,6 +49,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         sortedLastTasksImportance = repository.importanceLast
         sortedLastTasksDeadline = repository.deadlineLast
         sortedLastTasksComplete = repository.completeLast
+        syncNeedTasks = repository.sync
     }
 
     fun loadDetail(id: Int) = viewModelScope.launch(Dispatchers.IO) {
@@ -61,8 +64,8 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         repository.init()
     }
 
-    fun update(task: Task, status: Status?) = viewModelScope.launch(Dispatchers.IO) {
-        repository.update(task, status)
+    fun update(task: Task) = viewModelScope.launch(Dispatchers.IO) {
+        repository.update(task)
     }
 
     fun delete(task: Task) = viewModelScope.launch(Dispatchers.IO) {
@@ -89,6 +92,11 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
         holder.apply {
+            if (isExpand) {
+                detailLayout.visibility = View.GONE
+                expandButton.setImageResource(R.drawable.ic_card_expand_more)
+                isExpand = false
+            }
             color.setCardBackgroundColor(task.projectColor)
             title.text = task.name
             importanceBar.rating = task.importance.toFloat()
@@ -156,16 +164,17 @@ class TaskAdapter(
                                 } else {
                                     memo.visibility = View.GONE
                                 }
+
+                                updatedTask = detail.toTask()
                             }
-                            updatedTask = detail.toTask()
+
                         })
 
                         if (!completeChip.hasOnClickListeners())
                             completeChip.setOnClickListener {
-                                val previousStatus = updatedTask.status
                                 updatedTask.status = Status.SUCCESS
                                 updatedTask.completeDate = System.currentTimeMillis()
-                                viewModel.update(updatedTask, previousStatus)
+                                viewModel.update(updatedTask)
                             }
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
@@ -173,10 +182,9 @@ class TaskAdapter(
                             }
                         if (!deleteChip.hasOnClickListeners())
                             deleteChip.setOnClickListener {
-                                val previousStatus = updatedTask.status
                                 updatedTask.status = Status.FAIL
                                 updatedTask.completeDate = System.currentTimeMillis()
-                                viewModel.update(updatedTask, previousStatus)
+                                viewModel.update(updatedTask)
                             }
                         hasObserver = true
                     }

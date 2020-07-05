@@ -36,6 +36,7 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
     var sortedLastProjectsDeadline: LiveData<List<ProjectSummary>>
     val simpleProjects: LiveData<List<ProjectSimple>>
     var detailProject = MutableLiveData<Project>()
+    var syncNeedProjects: LiveData<List<Project>>
 
     var requestProjectUpdate = MutableLiveData<Project>()
     var requestTaskAdd = MutableLiveData<Project>()
@@ -53,6 +54,7 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
         sortedLastProjectsImportance = repository.importanceLast
         sortedLastProjectsDeadline = repository.deadlineLast
         simpleProjects = repository.simple
+        syncNeedProjects = repository.sync
     }
 
     fun init() = viewModelScope.launch(Dispatchers.IO) {
@@ -62,6 +64,11 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
     fun loadDetail(id: Int) = viewModelScope.launch(Dispatchers.IO) {
         detailProject.postValue(repository.loadDetail(id))
     }
+
+    fun syncStatus(id: Int, inProgress: Int, success: Int, fail: Int) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.syncStatus(id, inProgress, success, fail)
+        }
 
     fun insert(project: Project) = viewModelScope.launch(Dispatchers.IO) {
         repository.insert(project)
@@ -95,6 +102,11 @@ class ProjectAdapter(
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val project = projects[position]
         holder.apply {
+            if (isExpand) {
+                detailLayout.visibility = View.GONE
+                expandButton.setImageResource(R.drawable.ic_card_expand_more)
+                isExpand = false
+            }
             color.setCardBackgroundColor(project.color)
             title.text = project.name
             importanceBar.rating = project.importance.toFloat()
@@ -146,8 +158,8 @@ class ProjectAdapter(
                                 } else {
                                     memo.visibility = View.GONE
                                 }
+                                updatedProject = detail
                             }
-                            updatedProject = detail
                         })
 
                         if (!completeChip.hasOnClickListeners())
@@ -197,9 +209,6 @@ class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val importanceScore: TextView = itemView.importance_number_card
     val urgencyScore: TextView = itemView.urgency_number_card
     val deadlineDetail: TextView = itemView.deadline_number_card
-
-    //val estimatedTime = itemView.estimated_time_number_card
-    //val minimumStartTime = itemView.minimum_start_time_number_card
     val memo: TextView = itemView.memo_text_card
 
     val expandButton: ImageView = itemView.expand_icon_card

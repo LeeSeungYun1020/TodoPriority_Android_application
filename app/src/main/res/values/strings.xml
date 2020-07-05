@@ -113,8 +113,8 @@
     <string name="setting_bug_report_send">Send</string>
     <string name="setting_bug_report_description">Send bug report to developer.</string>
     <string name="setting_bug_report_fail">Failed to send bug report.</string>
-    <string name="setting_sync">Synchronization</string>
-    <string name="setting_sync_description">Synchronize data to the server.</string>
+    <string name="setting_sync_center">Synchronization center</string>
+    <string name="setting_sync_center_description">Visit synchronization center.</string>
     <string name="sync_id">ID</string>
     <string name="sync_pw">Password</string>
     <string name="sync_register">Register</string>
@@ -124,7 +124,7 @@
     <string name="sync_download">Download Data</string>
     <string name="sync_error_length16">Can\'t be longer than 16 characters.</string>
     <string name="sync_disconnection">Server disconnected</string>
-    <string name="sync_disconnection_description">Server is now off. You can\'t visit synchronization center.</string>
+    <string name="sync_disconnection_description">Now server is disconnected. You can\'t visit synchronization center.</string>
     <string name="dialog_ok">OK</string>
     <string name="sync_error_login">Login error</string>
     <string name="sync_error_id">No such id. Please register.</string>
@@ -140,5 +140,14 @@
     <string name="sync_error_load">An error occurred during database update. Try again.</string>
     <string name="sync_uploading">Data upload start.</string>
     <string name="sync_download_complete">Data Download Complete.</string>
+    <string name="setting_auto_sync">Auto synchronization</string>
+    <string name="setting_auto_sync_on">Auto synchronization is working.</string>
+    <string name="setting_auto_sync_off">Auto synchronization is not working.</string>
+    <string name="sync_upload_message">Do you want upload data to server? Data previously saved in server will be deleted.</string>
+    <string name="sync_download_message">Do you want download data from server? Data previously saved in this device will be deleted.</string>
+    <string name="setting_sync">Synchronization</string>
+    <string name="sync_upload_complete_project">Project upload complete.</string>
+    <string name="sync_upload_complete_task">Task upload complete.</string>
+    <string name="sync_logout">Log out</string>
 
 </resources>

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.swlab2020.todopriority.data.*
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -16,9 +17,17 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -37,6 +46,13 @@ class MainActivity : AppCompatActivity() {
         setNightMode()
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+        setNavigation()
+        setProjectObserver()
+        setTaskObserver()
+        setFragmentObserver()
+    }
+
+    private fun setNavigation() {
         val navController = findNavController(R.id.nav_host_fragment)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
@@ -68,6 +84,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_project -> startAddActivityForProject()
             }
         }
+    }
+
+    private fun setProjectObserver() {
         projectViewModel = ViewModelProvider(this)[ProjectViewModel::class.java]
         projectSimpleList = projectViewModel.simpleProjects.value ?: emptyList()
         projectViewModel.simpleProjects.observe(this, Observer { projects ->
@@ -80,31 +99,215 @@ class MainActivity : AppCompatActivity() {
                 startAddActivityForTask(intent)
             }
         })
-        taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
+        projectViewModel.syncNeedProjects.observe(this, Observer { projects ->
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean("auto_sync", false)
+            ) {
+                checkServer { que ->
+                    val pref = EncryptedSharedPreferences
+                        .create(
+                            this.applicationContext,
+                            "user",
+                            MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                                .setKeyScheme(
+                                    MasterKey.KeyScheme.AES256_GCM
+                                ).build(),
+                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                        )
+                    val id = pref.getString("id", null)
+                    val pw = pref.getString("pw", null)
+                    if (id != null && pw != null) {
+                        val url = "https://todo-server.run.goorm.io/save/upload/$id"
+                        projects.forEach {
+                            val jsonObject = JSONObject().apply {
+                                put("pw", pw)
+                                put("type", "project")
+                                put("id", it.id)
+                                put("color", it.color)
+                                put("name", it.name)
+                                put("importance", it.importance)
+                                put("deadline", it.deadline)
+                                put("memo", it.memo)
+                                put("status", it.status)
+                                put("success", it.success)
+                                put("fail", it.fail)
+                                put("inProgress", it.inProgress)
+                                put("completeDate", it.completeDate)
+                            }
+                            val requestPost =
+                                JsonObjectRequest(
+                                    Request.Method.POST,
+                                    url,
+                                    jsonObject,
+                                    { response ->
+                                        try {
+                                            if (response.getBoolean("success")) {
+                                                it.sync = true
+                                            } else {
+                                                Log.d("LOG", "1 $response")
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.d("LOG", "2 $e")
+                                        }
+                                    },
+                                    {
+                                        Log.d("LOG", "3 $it")
+                                    })
+                            que.add(requestPost)
+                        }
+                    }
+                }
+            }
+        })
+    }
 
+    private fun checkServer(callback: (que: RequestQueue) -> Unit) {
+        val url = "https://todo-server.run.goorm.io/"
+        val que = Volley.newRequestQueue(this)
+        val request = StringRequest(Request.Method.GET, url, { response: String ->
+            if (response == "connect") {
+                callback(que)
+            }
+        }, { _ ->
+            Log.d("LOG", "Server disconnected. auto-sync not working.")
+        })
+        que.add(request)
+    }
+
+    private fun setTaskObserver() {
+        taskViewModel = ViewModelProvider(this)[TaskViewModel::class.java]
+        taskViewModel.allTasks.observe(this, Observer { tasks: List<Task> ->
+            tasks.map { it.projectId }.distinct().forEach { id ->
+                val inProgress =
+                    tasks.count { it.projectId == id && it.status == Status.IN_PROGRESS }
+                val success = tasks.count { it.projectId == id && it.status == Status.SUCCESS }
+                val fail = tasks.count { it.projectId == id && it.status == Status.FAIL }
+                projectViewModel.syncStatus(id, inProgress, success, fail)
+            }
+        })
+        taskViewModel.syncNeedTasks.observe(this, Observer { tasks ->
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean("auto_sync", false)
+            ) {
+                checkServer {
+                    val pref = EncryptedSharedPreferences
+                        .create(
+                            this.applicationContext,
+                            "user",
+                            MasterKey.Builder(this, MasterKey.DEFAULT_MASTER_KEY_ALIAS)
+                                .setKeyScheme(
+                                    MasterKey.KeyScheme.AES256_GCM
+                                ).build(),
+                            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+                        )
+                    val id = pref.getString("id", null)
+                    val pw = pref.getString("pw", null)
+                    if (id != null && pw != null) {
+                        val que = Volley.newRequestQueue(this)
+                        val url = "https://todo-server.run.goorm.io/save/upload/$id"
+                        tasks.forEach {
+                            val jsonObject = JSONObject().apply {
+                                put("pw", pw)
+                                put("type", "task")
+                                put("projectId", it.projectId)
+                                put("id", it.id)
+                                put("name", it.name)
+                                put("importance", it.importance)
+                                put("deadline", it.deadline)
+                                put("estimatedTime", it.estimatedTime)
+                                put("memo", it.memo)
+                                put("status", it.status)
+                                put("completeDate", it.completeDate)
+                            }
+                            val requestPost =
+                                JsonObjectRequest(
+                                    Request.Method.POST,
+                                    url,
+                                    jsonObject,
+                                    { response ->
+                                        try {
+                                            if (response.getBoolean("success")) {
+                                                it.sync = true
+                                            } else {
+                                                Log.d("LOG", "4 $response")
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.d("LOG", "5 $e")
+                                        }
+                                    },
+                                    {
+                                        Log.d("LOG", "6 $it")
+                                    })
+                            que.add(requestPost)
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun setFragmentObserver() {
         fragmentViewModel = ViewModelProvider(this)[FragmentViewModel::class.java]
         fragmentViewModel.fabVisibility.observe(this, Observer { isVisible ->
-            if (isVisible)
-                main_fab.show()
-            else
-                main_fab.hide()
+            if (isVisible != null) {
+                if (isVisible)
+                    main_fab.show()
+                else
+                    main_fab.hide()
+                fragmentViewModel.fabVisibility.postValue(null)
+            }
+
         })
         fragmentViewModel.addProject.observe(this, Observer { intent ->
-            startAddActivityForProject(intent)
+            intent?.run {
+                startAddActivityForProject(this)
+                fragmentViewModel.addProject.postValue(null)
+            }
         })
         fragmentViewModel.addTask.observe(this, Observer { intent ->
-            startAddActivityForTask(intent)
+            intent?.run {
+                startAddActivityForTask(intent)
+                fragmentViewModel.addTask.postValue(null)
+            }
         })
         fragmentViewModel.updateProject.observe(this, Observer { intent ->
-            startAddActivityForProject(intent, update = true)
+            intent?.run {
+                startAddActivityForProject(intent, update = true)
+                fragmentViewModel.updateProject.postValue(null)
+            }
         })
         fragmentViewModel.updateTask.observe(this, Observer { intent ->
-            startAddActivityForTask(intent, update = true)
+            intent?.run {
+                startAddActivityForTask(intent, update = true)
+                fragmentViewModel.updateTask.postValue(null)
+            }
         })
         fragmentViewModel.navigateAnalyze.observe(this, Observer {
-            if (it != -1)
-                navController.navigate(R.id.nav_analyze)
+            if (it != -1) {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.nav_analyze)
+                fragmentViewModel.navigateAnalyze.postValue(-1)
+            }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val controller = findNavController(R.id.nav_host_fragment)
+        controller.currentDestination?.id.let {
+            when (it) {
+                R.id.nav_home -> {
+                    main_fab.visibility = View.VISIBLE
+                    main_fab.text = getString(R.string.action_add_task)
+                }
+                R.id.nav_project -> {
+                    main_fab.visibility = View.VISIBLE
+                    main_fab.text = getString(R.string.action_add_project)
+                }
+                else -> main_fab.visibility = View.INVISIBLE
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -172,13 +375,7 @@ class MainActivity : AppCompatActivity() {
             if (update) {
                 task.id = data.getIntExtra(AddActivity.extraList[6], -1)
                 task.status = Status.IN_PROGRESS
-                val status = when (data.getStringExtra(AddActivity.extraList[7])) {
-                    Status.IN_PROGRESS.toString() -> Status.IN_PROGRESS
-                    Status.SUCCESS.toString() -> Status.SUCCESS
-                    Status.FAIL.toString() -> Status.FAIL
-                    else -> Status.IN_PROGRESS
-                }
-                taskViewModel.update(task, status)
+                taskViewModel.update(task)
             } else {
                 taskViewModel.insert(task)
             }

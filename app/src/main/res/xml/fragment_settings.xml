@@ -5,14 +5,21 @@
         app:iconSpaceReserved="false"
         app:title="@string/setting_sync">
         <Preference
-            app:icon="@drawable/ic_setting_sync"
+            app:icon="@drawable/ic_setting_sync_center"
             app:key="sync"
-            app:summary="@string/setting_sync_description"
-            app:title="@string/setting_sync">
+            app:summary="@string/setting_sync_center_description"
+            app:title="@string/setting_sync_center">
             <intent
                 android:targetClass="android.swlab2020.todopriority.SyncActivity"
                 android:targetPackage="android.swlab2020.todopriority" />
         </Preference>
+        <SwitchPreference
+            app:dependency="sync"
+            app:icon="@drawable/ic_setting_sync"
+            app:key="auto_sync"
+            app:summaryOff="@string/setting_auto_sync_off"
+            app:summaryOn="@string/setting_auto_sync_on"
+            app:title="@string/setting_auto_sync" />
     </PreferenceCategory>
 
     <PreferenceCategory
