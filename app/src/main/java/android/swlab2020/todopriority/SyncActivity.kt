@@ -198,15 +198,15 @@ class SyncActivity : AppCompatActivity() {
             id = idText.editText?.text.toString()
             pw = pwText.editText?.text.toString()
             SafetyNet.getClient(this)
-                .verifyWithRecaptcha("6LdX-qsZAAAAAHw_M9ccYvDBXvpDRz4YofApoI8x")
+                .verifyWithRecaptcha(siteKey)
                 .addOnSuccessListener { response ->
                     val token = response.tokenResult
                     if (response.tokenResult?.isNotEmpty() == true) {
                         val request = JsonObjectRequest(Request.Method.POST,
-                            "https://www.google.com/recaptcha/api/siteverify?secret=6LdX-qsZAAAAACzwdlRvZocfs9tQXp7NV2u1zGUR&response=$token",
+                            "https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$token",
                             null,
-                            { response ->
-                                if (response.get("success") == true)
+                            {
+                                if (it.get("success") == true)
                                     validateUser(type)
                             }, {
                                 onServerDisconnected()

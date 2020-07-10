@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.swlab2020.todopriority.AddActivity
 import android.swlab2020.todopriority.R
 import android.swlab2020.todopriority.data.*
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -169,8 +170,9 @@ class AnalyzeFragment : Fragment() {
             }
         })
         projectViewModel.detailProject.observe(viewLifecycleOwner, Observer {
-            if (analyzeAdapter.projectId != -1)
+            if (analyzeAdapter.projectId == it.id)
                 analyzeAdapter.revalidateProject(it)
+            Log.d("LOG", "revalidate project(${it.name} ${it.inProgress})")
         })
         projectViewModel.requestProjectUpdate.observe(viewLifecycleOwner, Observer { project ->
             Intent(requireContext(), AddActivity::class.java).run {

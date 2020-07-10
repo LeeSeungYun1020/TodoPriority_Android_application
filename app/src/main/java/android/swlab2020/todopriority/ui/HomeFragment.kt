@@ -100,7 +100,7 @@ class HomeFragment : Fragment() {
     private fun RecyclerView.onScroll(linearLayoutManager: LinearLayoutManager) =
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0 || dy <= 0) {
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0 || dy < 0) {
                     fragmentViewModel.fabVisibility.postValue(true)
                 } else {
                     fragmentViewModel.fabVisibility.postValue(false)

@@ -179,6 +179,7 @@ class TaskAdapter(
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
                                 viewModel.requestTaskUpdate.postValue(updatedTask)
+                                expandButton.callOnClick()
                             }
                         if (!deleteChip.hasOnClickListeners())
                             deleteChip.setOnClickListener {

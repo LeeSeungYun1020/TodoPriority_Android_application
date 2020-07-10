@@ -170,6 +170,7 @@ class ProjectAdapter(
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
                                 viewModel.requestProjectUpdate.postValue(updatedProject)
+                                expandButton.callOnClick()
                             }
                         if (!deleteChip.hasOnClickListeners())
                             deleteChip.setOnClickListener {

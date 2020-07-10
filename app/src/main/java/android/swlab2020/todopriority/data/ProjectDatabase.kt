@@ -89,7 +89,7 @@ interface ProjectDao {
     @Query("UPDATE tasks SET status = :status, sync = 0 WHERE project_id = :id and status = 'IN_PROGRESS'")
     suspend fun syncTaskStatus(id: Int, status: Status)
 
-    @Query("UPDATE tasks SET status = 'FAIL', sync = 0 WHERE project_id = :id and deadline < :nowInMillis")
+    @Query("UPDATE tasks SET status = 'FAIL', sync = 0 WHERE project_id = :id and status = 'IN_PROGRESS' AND deadline < :nowInMillis")
     suspend fun validTaskStatus(id: Int, nowInMillis: Long)
 
     @Query("UPDATE projects SET in_progress = :inProgress, success = :succeed, `fail` = :failed WHERE id = :projectId")

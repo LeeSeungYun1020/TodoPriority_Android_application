@@ -307,6 +307,7 @@ class AnalyzeAdapter(
                             }
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
+                                expandButton.callOnClick()
                                 taskViewModel.requestTaskUpdate.postValue(updatedTask)
                             }
                         if (!deleteChip.hasOnClickListeners())
@@ -320,18 +321,17 @@ class AnalyzeAdapter(
                         editChip.visibility = View.GONE
                         deleteChip.chipIcon = context.getDrawable(R.drawable.ic_dialog_delete)
                         deleteChip.text = context.getString(R.string.card_delete)
-                        if (!deleteChip.hasOnClickListeners())
-                            deleteChip.setOnClickListener {
-                                MaterialAlertDialogBuilder(context)
-                                    .setIcon(R.drawable.ic_dialog_delete)
-                                    .setTitle(R.string.dialog_delete)
-                                    .setMessage(R.string.dialog_delete_msg)
-                                    .setNegativeButton(R.string.dialog_cancel, null)
-                                    .setPositiveButton(R.string.dialog_delete) { _, _ ->
-                                        taskViewModel.delete(updatedTask)
-                                    }
-                                    .show()
-                            }
+                        deleteChip.setOnClickListener {
+                            MaterialAlertDialogBuilder(context)
+                                .setIcon(R.drawable.ic_dialog_delete)
+                                .setTitle(R.string.dialog_delete)
+                                .setMessage(R.string.dialog_delete_msg)
+                                .setNegativeButton(R.string.dialog_cancel, null)
+                                .setPositiveButton(R.string.dialog_delete) { _, _ ->
+                                    taskViewModel.delete(updatedTask)
+                                }
+                                .show()
+                        }
                     }
                 }
                 isExpand = !isExpand
@@ -422,6 +422,7 @@ class AnalyzeAdapter(
                         if (!editChip.hasOnClickListeners())
                             editChip.setOnClickListener {
                                 projectViewModel.requestProjectUpdate.postValue(updatedProject)
+                                expandButton.callOnClick()
                             }
                         if (!deleteChip.hasOnClickListeners())
                             deleteChip.setOnClickListener {
@@ -437,18 +438,17 @@ class AnalyzeAdapter(
                         editChip.visibility = View.GONE
                         deleteChip.chipIcon = context.getDrawable(R.drawable.ic_dialog_delete)
                         deleteChip.text = context.getString(R.string.card_delete)
-                        if (!deleteChip.hasOnClickListeners())
-                            deleteChip.setOnClickListener {
-                                MaterialAlertDialogBuilder(context)
-                                    .setIcon(R.drawable.ic_dialog_delete)
-                                    .setTitle(R.string.dialog_delete)
-                                    .setMessage(R.string.dialog_delete_msg)
-                                    .setNegativeButton(R.string.dialog_cancel, null)
-                                    .setPositiveButton(R.string.dialog_delete) { _, _ ->
-                                        projectViewModel.delete(updatedProject)
-                                    }
-                                    .show()
-                            }
+                        deleteChip.setOnClickListener {
+                            MaterialAlertDialogBuilder(context)
+                                .setIcon(R.drawable.ic_dialog_delete)
+                                .setTitle(R.string.dialog_delete)
+                                .setMessage(R.string.dialog_delete_msg)
+                                .setNegativeButton(R.string.dialog_cancel, null)
+                                .setPositiveButton(R.string.dialog_delete) { _, _ ->
+                                    projectViewModel.delete(updatedProject)
+                                }
+                                .show()
+                        }
                         taskChip.visibility = View.GONE
                     }
                     if (!analyzeChip.hasOnClickListeners())
@@ -485,6 +485,8 @@ class AnalyzeAdapter(
 
     fun revalidateLastTasks(tasksLast: List<TaskSummary>) {
         lastTasks = tasksLast.map { TaskItem(it) }
+        if (projectId != -1)
+            projectViewModel.loadDetail(projectId)
         revalidate()
     }
 
