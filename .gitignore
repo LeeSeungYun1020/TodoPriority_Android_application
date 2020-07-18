@@ -12,3 +12,4 @@
 /captures
 .externalNativeBuild
 .cxx
+/app/src/main/java/android/swlab2020/todopriority/data/Key.kt
