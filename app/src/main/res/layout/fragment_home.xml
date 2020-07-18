@@ -7,11 +7,11 @@
     tools:context=".ui.HomeFragment">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/home_text_layout_right"
+        android:id="@+id/home_text_layout_left"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@id/home_text_layout_left"
+        app:layout_constraintEnd_toStartOf="@id/home_text_layout_right"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -21,16 +21,18 @@
             android:layout_height="wrap_content"
             android:editable="false"
             android:inputType="none"
+            android:ellipsize="end"
+            android:singleLine="true"
             tools:ignore="Deprecated,LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/home_text_layout_left"
+        android:id="@+id/home_text_layout_right"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/home_text_layout_right"
+        app:layout_constraintStart_toEndOf="@id/home_text_layout_left"
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
@@ -39,6 +41,8 @@
             android:layout_height="wrap_content"
             android:editable="false"
             android:inputType="none"
+            android:ellipsize="end"
+            android:singleLine="true"
             tools:ignore="Deprecated,LabelFor" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -49,6 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_text_layout_right" />
+        app:layout_constraintTop_toBottomOf="@id/home_text_layout_left" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

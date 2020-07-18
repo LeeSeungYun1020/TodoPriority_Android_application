@@ -9,6 +9,9 @@
         android:id="@+id/dropdown_menu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:editable="false"
         android:inputType="none"
-        tools:ignore="LabelFor" />
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:ignore="Deprecated,LabelFor" />
 </com.google.android.material.textfield.TextInputLayout>
