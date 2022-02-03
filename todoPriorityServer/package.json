@@ -6,17 +6,16 @@
     "start": "node app"
   },
   "dependencies": {
-    "bcrypt": "^5.0.0",
-    "body-parser": "~1.18.2",
+    "bcrypt": "^5.0.1",
+    "body-parser": "~1.19.1",
     "compression": "^1.7.4",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "ejs": "~2.5.7",
-    "express": "~4.15.5",
-    "morgan": "~1.9.1",
+    "cookie-parser": "~1.4.6",
+    "debug": "~4.3.3",
+    "ejs": "~3.1.6",
+    "express": "~4.17.2",
+    "morgan": "~1.10.0",
     "mysql": "^2.18.1",
-    "sanitize-html": "^2.3.2",
-    "serve-favicon": "~2.4.5",
-    "mime": ">=2.0.3"
+    "sanitize-html": "^2.6.1",
+    "serve-favicon": "~2.5.0"
   }
 }
