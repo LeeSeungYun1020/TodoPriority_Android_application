@@ -55,23 +55,6 @@ __________________
 응용 프로그램이 개발되고 있습니다.
 
 <table style="width: 97%; margin-left: 1.5%">
-    <style>
-        td {
-            padding: 10px 0px;
-            text-align: center;
-        }
-        .icon {
-            padding: 0;
-            margin: 0;
-            text-align: center;
-        }
-        .first {
-            background-color: #F1F4F5;
-        }
-        .second {
-            background-color: #dee5e8
-        }
-    </style>
     <thead>
     <tr style="font-size: x-large">
         <th colspan="7" style="background-color:#607D8B; padding: 10px">
