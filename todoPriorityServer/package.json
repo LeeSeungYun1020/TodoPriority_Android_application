@@ -16,6 +16,7 @@
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "sanitize-html": "^2.3.2",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.4.5",
+    "mime": ">=2.0.3"
   }
 }
